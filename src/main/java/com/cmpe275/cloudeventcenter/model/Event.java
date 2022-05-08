@@ -1,6 +1,6 @@
 package com.cmpe275.cloudeventcenter.model;
 
-import com.cmpe275.cloudeventcenter.utils.enums;
+import com.cmpe275.cloudeventcenter.utils.Enum;
 import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -45,10 +45,10 @@ public class Event {
     private double fee;
 
     @Enumerated(EnumType.STRING)
-    private enums.AdmissionPolicy admissionPolicy;
+    private Enum.AdmissionPolicy admissionPolicy;
 
     @Enumerated(EnumType.STRING)
-    private enums.EventStatus eventStatus;
+    private Enum.EventStatus eventStatus;
 
 }
 
