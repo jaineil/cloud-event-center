@@ -1,5 +1,6 @@
 package com.cmpe275.cloudeventcenter.model;
 
+import com.cmpe275.cloudeventcenter.utils.enums;
 import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,18 +13,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "EVENTS")
 public class Event {
-    public enum AdmissionPolicy {
-        FirstComeFirstServe,
-        OnApproval
-    }
-
-    public enum EventStatus {
-        SignUpOpen,
-        SignUpClosed,
-        Ongoing,
-        Finished,
-        Cancelled,
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,10 +45,10 @@ public class Event {
     private double fee;
 
     @Enumerated(EnumType.STRING)
-    private AdmissionPolicy admissionPolicy;
+    private enums.AdmissionPolicy admissionPolicy;
 
     @Enumerated(EnumType.STRING)
-    private EventStatus eventStatus;
+    private enums.EventStatus eventStatus;
 
 }
 
