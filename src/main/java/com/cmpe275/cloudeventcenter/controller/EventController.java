@@ -2,7 +2,7 @@ package com.cmpe275.cloudeventcenter.controller;
 
 import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.service.EventService;
-import com.cmpe275.cloudeventcenter.utils.enums;
+import com.cmpe275.cloudeventcenter.utils.Enum;
 import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,7 @@ public class EventController {
         int minParticipants = (int) eventReq.get("minParticipants");
         int maxParticipants = (int) eventReq.get("maxParticipants");
         double fee = (double) eventReq.get("fee");
-        enums.AdmissionPolicy admissionPolicy = enums.AdmissionPolicy.valueOf((String) eventReq.get("admissionPolicy"));
+        Enum.AdmissionPolicy admissionPolicy = Enum.AdmissionPolicy.valueOf((String) eventReq.get("admissionPolicy"));
 
         Event event = Event.builder()
                 .title(title)
