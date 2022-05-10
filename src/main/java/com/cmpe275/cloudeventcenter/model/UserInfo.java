@@ -35,5 +35,5 @@ public class UserInfo {
 
     @OneToOne
     @JoinColumn(name = "ADDRESS_ID")
-    private Address addressId;
+    private Address address;
 }
