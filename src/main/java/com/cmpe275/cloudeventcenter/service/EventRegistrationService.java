@@ -21,4 +21,10 @@ public class EventRegistrationService {
         eventRegistration.setIsPaid(true);
         eventRegistrationRepository.save(eventRegistration);
     }
+
+    public void approveRegistration(long registrationId) {
+        EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByRegistrationId(registrationId);
+        eventRegistration.setIsApproved(true);
+        eventRegistrationRepository.save(eventRegistration);
+    }
 }

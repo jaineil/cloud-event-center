@@ -42,7 +42,7 @@ public class EventRegistrationController {
         boolean isPaid = (boolean) eventRegReq.get("isPaid");
 
         Event event = eventService.getEventById(eventId);
-        UserInfo userInfo = userService.getUserByUserId(participantId);
+        UserInfo userInfo = userService.getUserInfo(participantId);
 
         EventRegistration eventRegistration = EventRegistration.builder()
                 .event(event)
@@ -65,4 +65,13 @@ public class EventRegistrationController {
         return new ResponseEntity<String>("Successfully paid for registration with id: " + registrationId, HttpStatus.CREATED);
     }
 
+    @PutMapping("/approve")
+    public ResponseEntity<String> approveRegistrationAPI(
+            @RequestBody Map<?,?> eventRegReq
+    ) {
+
+        long registrationId = (long) (int) eventRegReq.get("registrationId");
+        eventRegistrationService.approveRegistration(registrationId);
+        return new ResponseEntity<String>("Successfully approved registration with id: " + registrationId, HttpStatus.CREATED);
+    }
 }

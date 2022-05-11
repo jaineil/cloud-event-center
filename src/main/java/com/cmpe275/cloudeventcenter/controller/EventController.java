@@ -112,5 +112,4 @@ public class EventController {
                 Event event = eventService.getEventById(eventId);
                 return new ResponseEntity<Event>(event, HttpStatus.OK);
         }
-
 }
