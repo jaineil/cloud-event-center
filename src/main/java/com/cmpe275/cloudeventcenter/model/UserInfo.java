@@ -14,9 +14,8 @@ import javax.persistence.*;
 @Table(name = "USER_INFO")
 public class UserInfo {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
-    private long userId; // received from Firebase
+    private String userId; // received from Firebase
 
     @Enumerated(EnumType.STRING)
     private Enum.AccountType accountType;

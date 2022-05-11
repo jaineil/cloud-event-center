@@ -13,8 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("event")
+@RequestMapping("/event")
 public class EventController {
 
     @Autowired
@@ -42,7 +43,7 @@ public class EventController {
                 .zipcode(zipcode)
                 .build();
 
-        long addressId = addressService.insert(address);
+        addressService.insert(address);
 
         String title = String.valueOf(eventReq.get("title"));
         String description = String.valueOf(eventReq.get("description"));
