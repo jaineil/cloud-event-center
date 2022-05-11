@@ -124,20 +124,6 @@ public class EventController {
                 return new ResponseEntity<Event>(event, HttpStatus.OK);
         }
 
-        @GetMapping("/signup-read-only/{eventId}")
-        public ResponseEntity<Boolean> signupForumReadOnlyAPI (
-                @PathVariable("eventId") long eventId) {
-                Event event = eventService.getEventById(eventId);
-                return new ResponseEntity<Boolean>(event.getIsSignUpForumReadOnly(), HttpStatus.OK);
-        }
-
-        @GetMapping("/participant-read-only/{eventId}")
-        public ResponseEntity<Boolean> participantForumReadOnlyAPI (
-                @PathVariable("eventId") long eventId) {
-                Event event = eventService.getEventById(eventId);
-                return new ResponseEntity<Boolean>(event.getIsParticipantForumReadOnly(), HttpStatus.OK);
-        }
-
 //        @PutMapping("/signup-read-only")
 //        public ResponseEntity<String> signupFormReadOnlyAPI(
 //                @RequestBody Map<?,?> eventRegReq

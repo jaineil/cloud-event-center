@@ -2,6 +2,7 @@ package com.cmpe275.cloudeventcenter.controller;
 
 import com.cmpe275.cloudeventcenter.model.SignupForum;
 import com.cmpe275.cloudeventcenter.model.UserInfo;
+import com.cmpe275.cloudeventcenter.service.EventService;
 import com.cmpe275.cloudeventcenter.service.SignupForumService;
 import com.cmpe275.cloudeventcenter.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,13 @@ import java.util.Map;
 public class SignupForumController {
     @Autowired private SignupForumService signupForumService;
     @Autowired private UserService userService;
+    @Autowired private EventService eventService;
 
     @PostMapping("/addMessage")
     public ResponseEntity<?> saveMessage(
             @RequestBody Map<?,?> reqBody
     ) {
+
         String userId = String.valueOf(reqBody.get("userId"));
         UserInfo fetchedUser = userService.getUserInfo(userId);
 
@@ -31,6 +34,10 @@ public class SignupForumController {
         String eventIdStr = String.valueOf(reqBody.get("eventId"));
         Integer eventIdInt = Integer.parseInt(eventIdStr);
         Long eventId = Long.valueOf(eventIdInt);
+
+        if (!eventService.isSignupForumReadOnly(eventId)) {
+            return new ResponseEntity<>("Sign-up forum is read-only now", HttpStatus.NOT_FOUND);
+        }
 
         SignupForum message = SignupForum.builder()
                     .userInfo(fetchedUser)
