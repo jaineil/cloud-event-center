@@ -29,7 +29,7 @@ public class UserInfo {
     @Column(name = "GENDER")
     private String gender;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", length = 3000)
     private String description;
 
     @OneToOne
