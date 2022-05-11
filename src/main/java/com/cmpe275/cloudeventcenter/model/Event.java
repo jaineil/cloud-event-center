@@ -23,7 +23,7 @@ public class Event {
     @Column(name = "TITLE")
     private String title;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION" , length = 3000)
     private String description;
 
     @Column(name = "START_TIME", columnDefinition = "TIMESTAMP")
