@@ -2,6 +2,8 @@ package com.cmpe275.cloudeventcenter.model;
 
 import com.cmpe275.cloudeventcenter.utils.Enum;
 import lombok.*;
+import org.apache.catalina.User;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +21,10 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "EVENT_ID")
     private long eventId;
+
+    @OneToOne
+    @JoinColumn(name = "ORGANIZER_ID")
+    private UserInfo userInfo;
 
     @Column(name = "TITLE")
     private String title;
