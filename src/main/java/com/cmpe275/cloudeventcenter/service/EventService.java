@@ -20,6 +20,11 @@ public class EventService {
         return eventId;
     }
 
+    public List getAllEvents() {
+        List<Event> allEvents = eventRepository.findAll();
+        return allEvents;
+    }
+
     public List searchEvents(
             String location,
             Enum eventStatus,
