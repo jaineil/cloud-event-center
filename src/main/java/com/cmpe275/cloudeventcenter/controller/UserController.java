@@ -65,4 +65,13 @@ public class UserController {
 
         return new ResponseEntity<>("Inserted user with id: " + userId, HttpStatus.OK);
     }
+
+    @GetMapping("/checkUser/{userId}")
+    @ResponseBody
+    public ResponseEntity<?> getPlayer(
+            @PathVariable String userId
+    ) {
+        boolean ifUserExists = userService.checkIfUserExists(userId);
+        return new ResponseEntity<>(ifUserExists, HttpStatus.OK);
+    }
 }
