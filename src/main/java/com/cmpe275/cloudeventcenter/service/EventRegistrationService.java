@@ -1,6 +1,8 @@
 package com.cmpe275.cloudeventcenter.service;
 
+import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.model.EventRegistration;
+import com.cmpe275.cloudeventcenter.model.UserInfo;
 import com.cmpe275.cloudeventcenter.repository.EventRegistrationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,5 +28,14 @@ public class EventRegistrationService {
         EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByRegistrationId(registrationId);
         eventRegistration.setIsApproved(true);
         eventRegistrationRepository.save(eventRegistration);
+    }
+
+    public Boolean getRegistration(Event event, UserInfo userInfo) {
+        EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByEventAndUserInfo(event, userInfo);
+        if (eventRegistration == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }
