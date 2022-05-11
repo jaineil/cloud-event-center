@@ -31,4 +31,11 @@ public class EventService {
         List<Event> allEvents = eventRepository.findAll();
         return allEvents;
     }
+
+    public Event getEventById(
+            long eventId
+    ) {
+        Event event = eventRepository.getEventByEventId(eventId);
+        return event;
+    }
 }

@@ -81,7 +81,6 @@ public class EventController {
 
     @GetMapping("/search")
     public ResponseEntity<List> searchForEventsAPI(
-//            @RequestParam (String location),
             @RequestParam(required = false) String location,
             @RequestParam (name = "eventStatus", required = false) String eventStatusString,
             @RequestParam (required = false)
@@ -105,6 +104,14 @@ public class EventController {
                 organizer
         );
         return new ResponseEntity<List>(allEvents, HttpStatus.OK);
+    }
+
+    @GetMapping("/{eventId}")
+    public ResponseEntity<Event> getEventByIdAPI(
+            @PathVariable("eventId") long eventId
+    ) {
+        Event event = eventService.getEventById(eventId);
+        return new ResponseEntity<Event>(event, HttpStatus.OK);
     }
 
 }
