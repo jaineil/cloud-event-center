@@ -30,9 +30,9 @@ public class EventRegistrationService {
         eventRegistrationRepository.save(eventRegistration);
     }
 
-    public Boolean getRegistration(Event event, UserInfo userInfo) {
+    public boolean isUserRegistered(Event event, UserInfo userInfo) {
         EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByEventAndUserInfo(event, userInfo);
-        if (eventRegistration == null) {
+        if (eventRegistration.getIsApproved() == false) {
             return false;
         } else {
             return true;
