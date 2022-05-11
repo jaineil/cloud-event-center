@@ -79,6 +79,13 @@ public class EventController {
         return new ResponseEntity<String>("Successfully created event with id: " + eventId, HttpStatus.CREATED);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List> searchForEventsAPI(
+    ) {
+        List<Event> allEvents = eventService.getAllEvents();
+        return new ResponseEntity<List>(allEvents, HttpStatus.OK);
+    }
+
     @GetMapping("/search")
     public ResponseEntity<List> searchForEventsAPI(
             @RequestParam(required = false) String location,
