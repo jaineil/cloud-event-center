@@ -68,7 +68,7 @@ public class UserController {
 
     @GetMapping("/checkUser/{userId}")
     @ResponseBody
-    public ResponseEntity<?> getPlayer(
+    public ResponseEntity<?> checkIfUserExists(
             @PathVariable String userId
     ) {
         boolean ifUserExists = userService.checkIfUserExists(userId);

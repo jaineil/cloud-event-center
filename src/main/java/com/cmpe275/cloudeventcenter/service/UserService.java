@@ -33,7 +33,8 @@ public class UserService {
         }
     }
 
-    public UserInfo getUserByUserId(String userId) {
-        return userRepository.findUserInfoByUserId(userId);
+    public UserInfo getUserInfo(String userId) {
+        UserInfo fetchedUser = userRepository.findUserInfoByUserId(userId);
+        return fetchedUser;
     }
 }
