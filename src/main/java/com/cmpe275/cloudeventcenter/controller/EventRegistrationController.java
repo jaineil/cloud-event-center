@@ -44,15 +44,20 @@ public class EventRegistrationController {
         Event event = eventService.getEventById(eventId);
         UserInfo userInfo = userService.getUserInfo(participantId);
 
-        EventRegistration eventRegistration = EventRegistration.builder()
+        Enum.AccountType accountType = userInfo.getAccountType();
+        if (accountType.equals(Enum.AccountType.Person)) {
+            EventRegistration eventRegistration = EventRegistration.builder()
                 .event(event)
                 .userInfo(userInfo)
                 .isApproved(isApproved)
                 .isPaid(isPaid)
                 .build();
 
-        long eventRegistrationId = eventRegistrationService.insert(eventRegistration);
-        return new ResponseEntity<String>("Successfully registered for event with id: " + eventRegistrationId, HttpStatus.CREATED);
+            long eventRegistrationId = eventRegistrationService.insert(eventRegistration);
+            return new ResponseEntity<String>("Successfully registered for event with id: " + eventRegistrationId, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<String>("Organizations are not allowed to register for events", HttpStatus.FORBIDDEN);
+        }
     }
 
     @PutMapping("/pay")

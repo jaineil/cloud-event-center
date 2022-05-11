@@ -2,8 +2,10 @@ package com.cmpe275.cloudeventcenter.controller;
 
 import com.cmpe275.cloudeventcenter.model.Address;
 import com.cmpe275.cloudeventcenter.model.Event;
+import com.cmpe275.cloudeventcenter.model.UserInfo;
 import com.cmpe275.cloudeventcenter.service.AddressService;
 import com.cmpe275.cloudeventcenter.service.EventService;
+import com.cmpe275.cloudeventcenter.service.UserService;
 import com.cmpe275.cloudeventcenter.utils.Enum;
 import org.apache.coyote.Response;
 import org.apache.tomcat.jni.Local;
@@ -29,6 +31,9 @@ public class EventController {
         @Autowired
         private AddressService addressService;
 
+        @Autowired
+        private UserService userService;
+
         @PostMapping()
         public ResponseEntity<String> createEventAPI(
                         @RequestBody Map<?, ?> eventReq) {
@@ -49,6 +54,9 @@ public class EventController {
 
                 addressService.insert(address);
 
+                String organizerId = String.valueOf(eventReq.get("organizerId"));
+                UserInfo userInfo = userService.getUserInfo(organizerId);
+
                 String title = String.valueOf(eventReq.get("title"));
                 String description = String.valueOf(eventReq.get("description"));
                 LocalDateTime startTime = LocalDateTime.parse((CharSequence) eventReq.get("startTime"));
@@ -62,6 +70,7 @@ public class EventController {
                                 .valueOf((String) eventReq.get("admissionPolicy"));
 
                 Event event = Event.builder()
+                                .userInfo(userInfo)
                                 .title(title)
                                 .description(description)
                                 .startTime(startTime)
