@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface EventRegistrationRepository extends CrudRepository<EventRegistration, Long> {
-
+    EventRegistration getEventRegistrationByRegistrationId(long registrationId);
 }

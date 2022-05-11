@@ -55,4 +55,14 @@ public class EventRegistrationController {
         return new ResponseEntity<String>("Successfully registered for event with id: " + eventRegistrationId, HttpStatus.CREATED);
     }
 
+    @PutMapping("/pay")
+    public ResponseEntity<String> completePaymentAPI(
+            @RequestBody Map<?,?> eventRegReq
+    ) {
+
+        long registrationId = (long) (int) eventRegReq.get("registrationId");
+        eventRegistrationService.completePayment(registrationId);
+        return new ResponseEntity<String>("Successfully paid for registration with id: " + registrationId, HttpStatus.CREATED);
+    }
+
 }
