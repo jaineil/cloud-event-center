@@ -15,4 +15,10 @@ public class EventRegistrationService {
         long eventRegistrationId = eventRegistrationRepository.save(eventRegistration).getRegistrationId();
         return eventRegistrationId;
     }
+
+    public void completePayment(long registrationId) {
+        EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByRegistrationId(registrationId);
+        eventRegistration.setIsPaid(true);
+        eventRegistrationRepository.save(eventRegistration);
+    }
 }
