@@ -4,6 +4,7 @@ import com.cmpe275.cloudeventcenter.utils.Enum;
 import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Getter
@@ -55,5 +56,8 @@ public class Event {
 
     @Enumerated(EnumType.STRING)
     private Enum.EventStatus eventStatus;
+
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "eventId")
+//    private List<EventRegistration> eventRegistrationList;
 
 }

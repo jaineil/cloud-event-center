@@ -4,6 +4,7 @@ import com.cmpe275.cloudeventcenter.utils.Enum;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Builder
 @Getter
@@ -35,4 +36,7 @@ public class UserInfo {
     @OneToOne
     @JoinColumn(name = "ADDRESS_ID")
     private Address address;
+
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userId")
+//    private List<EventRegistration> eventRegistrationList;
 }

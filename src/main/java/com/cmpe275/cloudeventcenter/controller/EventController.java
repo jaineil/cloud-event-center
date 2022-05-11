@@ -5,12 +5,17 @@ import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.service.AddressService;
 import com.cmpe275.cloudeventcenter.service.EventService;
 import com.cmpe275.cloudeventcenter.utils.Enum;
+import org.apache.coyote.Response;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -25,7 +30,7 @@ public class EventController {
     private AddressService addressService;
 
     @PostMapping()
-    public ResponseEntity<String> testAPI(
+    public ResponseEntity<String> createEventAPI(
             @RequestBody Map<?,?> eventReq
     ) {
 
@@ -73,4 +78,47 @@ public class EventController {
         long eventId = eventService.insert(event);
         return new ResponseEntity<String>("Successfully created event with id: " + eventId, HttpStatus.CREATED);
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<List> searchForEventsAPI(
+    ) {
+        List<Event> allEvents = eventService.getAllEvents();
+        return new ResponseEntity<List>(allEvents, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List> searchForEventsAPI(
+            @RequestParam(required = false) String location,
+            @RequestParam (name = "eventStatus", required = false) String eventStatusString,
+            @RequestParam (required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime startTime,
+            @RequestParam (required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime endTime,
+            @RequestParam (required = false) String keyword,
+            @RequestParam (required = false) String organizer
+    ) {
+
+        Enum.EventStatus eventStatus = Enum.EventStatus.valueOf(eventStatusString);
+
+        List<Event> allEvents = eventService.searchEvents(
+                location,
+                eventStatus,
+                startTime,
+                endTime,
+                keyword,
+                organizer
+        );
+        return new ResponseEntity<List>(allEvents, HttpStatus.OK);
+    }
+
+    @GetMapping("/{eventId}")
+    public ResponseEntity<Event> getEventByIdAPI(
+            @PathVariable("eventId") long eventId
+    ) {
+        Event event = eventService.getEventById(eventId);
+        return new ResponseEntity<Event>(event, HttpStatus.OK);
+    }
+
 }
