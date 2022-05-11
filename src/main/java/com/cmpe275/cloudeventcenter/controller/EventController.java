@@ -3,7 +3,6 @@ package com.cmpe275.cloudeventcenter.controller;
 import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.service.EventService;
 import com.cmpe275.cloudeventcenter.utils.Enum;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
