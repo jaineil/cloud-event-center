@@ -2,7 +2,6 @@ package com.cmpe275.cloudeventcenter.service;
 
 import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.repository.EventRepository;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,5 +41,15 @@ public class EventService {
     ) {
         Event event = eventRepository.getEventByEventId(eventId);
         return event;
+    }
+
+    public boolean isSignupForumReadOnly(long eventId) {
+        Event event = getEventById(eventId);
+        return event.getIsSignUpForumReadOnly();
+    }
+
+    public boolean isParticipantForumReadOnly(long eventId) {
+        Event event = getEventById(eventId);
+        return event.getIsSignUpForumReadOnly();
     }
 }
