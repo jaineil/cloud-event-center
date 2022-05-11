@@ -73,6 +73,8 @@ public class EventController {
                                 .fee(fee)
                                 .imageUrl(imageUrl)
                                 .admissionPolicy(admissionPolicy)
+                                .isSignUpForumReadOnly(false)
+                                .isParticipantForumReadOnly(false)
                                 .build();
 
                 long eventId = eventService.insert(event);
@@ -80,7 +82,7 @@ public class EventController {
         }
 
         @GetMapping("/all")
-        public ResponseEntity<List> searchForEventsAPI() {
+        public ResponseEntity<List> getAllEventsAPI() {
                 List<Event> allEvents = eventService.getAllEvents();
                 return new ResponseEntity<List>(allEvents, HttpStatus.OK);
         }
@@ -112,4 +114,27 @@ public class EventController {
                 Event event = eventService.getEventById(eventId);
                 return new ResponseEntity<Event>(event, HttpStatus.OK);
         }
+
+        @GetMapping("/signup-read-only/{eventId}")
+        public ResponseEntity<Boolean> signupForumReadOnlyAPI (
+                @PathVariable("eventId") long eventId) {
+                Event event = eventService.getEventById(eventId);
+                return new ResponseEntity<Boolean>(event.getIsSignUpForumReadOnly(), HttpStatus.OK);
+        }
+
+        @GetMapping("/participant-read-only/{eventId}")
+        public ResponseEntity<Boolean> participantForumReadOnlyAPI (
+                @PathVariable("eventId") long eventId) {
+                Event event = eventService.getEventById(eventId);
+                return new ResponseEntity<Boolean>(event.getIsParticipantForumReadOnly(), HttpStatus.OK);
+        }
+
+//        @PutMapping("/signup-read-only")
+//        public ResponseEntity<String> signupFormReadOnlyAPI(
+//                @RequestBody Map<?,?> eventRegReq
+//        ) {
+//                long eventId = (long) (int) eventRegReq.get("eventId");
+//                eventService.makeSignupFormReadOnly(eventId);
+//                return new ResponseEntity<String>("Successfully approved registration with id: " + eventId, HttpStatus.CREATED);
+//        }
 }

@@ -57,6 +57,12 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private Enum.EventStatus eventStatus;
 
+    @Column(name = "IS_SIGNUP_FORUM_READ_ONLY", columnDefinition = "boolean default false")
+    private Boolean isSignUpForumReadOnly;
+
+    @Column(name = "IS_PARTICIPANT_FORUM_READ_ONLY", columnDefinition = "boolean default false")
+    private Boolean isParticipantForumReadOnly;
+
 //    @OneToMany(fetch = FetchType.LAZY, mappedBy = "eventId")
 //    private List<EventRegistration> eventRegistrationList;
 
