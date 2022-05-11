@@ -47,6 +47,9 @@ public class Event {
     @Column(name = "FEE")
     private double fee;
 
+    @Column(name = "IMAGE_URL")
+    private String imageUrl;
+
     @Enumerated(EnumType.STRING)
     private Enum.AdmissionPolicy admissionPolicy;
 
