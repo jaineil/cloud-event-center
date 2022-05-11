@@ -24,7 +24,9 @@ public class UserService {
     public boolean checkIfUserExists(String userId) {
         try {
             UserInfo userInfo = userRepository.findUserInfoByUserId(userId);
-            return true;
+            if (userInfo == null) {
+                return false;
+            } else return true;
         } catch (Exception e) {
             System.err.println(e);
             return false;
