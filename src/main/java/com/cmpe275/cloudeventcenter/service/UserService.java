@@ -20,4 +20,14 @@ public class UserService {
             return;
         }
     }
+
+    public boolean checkIfUserExists(String userId) {
+        try {
+            UserInfo userInfo = userRepository.findUserInfoByUserId(userId);
+            return true;
+        } catch (Exception e) {
+            System.err.println(e);
+            return false;
+        }
+    }
 }
