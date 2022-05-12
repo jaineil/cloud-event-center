@@ -68,6 +68,7 @@ public class EventController {
                 String imageUrl = String.valueOf(eventReq.get("imageUrl"));
                 Enum.AdmissionPolicy admissionPolicy = Enum.AdmissionPolicy
                                 .valueOf((String) eventReq.get("admissionPolicy"));
+                Enum.EventStatus eventStatus = Enum.EventStatus.valueOf("SignUpOpen");
 
                 Event event = Event.builder()
                                 .userInfo(userInfo)
@@ -82,6 +83,7 @@ public class EventController {
                                 .fee(fee)
                                 .imageUrl(imageUrl)
                                 .admissionPolicy(admissionPolicy)
+                                .eventStatus(eventStatus)
                                 .isSignUpForumReadOnly(false)
                                 .isParticipantForumReadOnly(false)
                                 .build();
@@ -97,16 +99,21 @@ public class EventController {
         }
 
         @GetMapping("/search")
-        public ResponseEntity<List> searchForEventsAPI(
+        public ResponseEntity<?> searchForEventsAPI(
                         @RequestParam(required = false) String location,
-                        @RequestParam(name = "eventStatus", required = false) String eventStatusString,
+                        @RequestParam(name = "eventStatus", required = false) String eventStatus,
                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime,
                         @RequestParam(required = false) String keyword,
                         @RequestParam(required = false) String organizer) {
 
-                Enum.EventStatus eventStatus = Enum.EventStatus.valueOf(eventStatusString);
-
+//                System.out.println(location);
+//                System.out.println(eventStatus);
+//                System.out.println(startTime);
+//                System.out.println(endTime);
+//                System.out.println(keyword);
+//                System.out.println(organizer);
+//
                 List<Event> allEvents = eventService.searchEvents(
                                 location,
                                 eventStatus,
