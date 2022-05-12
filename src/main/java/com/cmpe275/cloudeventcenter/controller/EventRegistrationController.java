@@ -32,8 +32,8 @@ public class EventRegistrationController {
     private UserService userService;
 
     @PostMapping()
-    public ResponseEntity<String> createEventAPI(
-            @RequestBody Map<?,?> eventRegReq
+        public ResponseEntity<String> registerEventAPI(
+                @RequestBody Map<?,?> eventRegReq
     ) {
 
         long eventId = (long) (int) eventRegReq.get("eventId");
@@ -44,20 +44,34 @@ public class EventRegistrationController {
         Event event = eventService.getEventById(eventId);
         UserInfo userInfo = userService.getUserInfo(participantId);
 
+        if (participantId.equals(event.getUserInfo().getUserId())) {
+            return new ResponseEntity<String>("You cannot register for an event you created yourself", HttpStatus.FORBIDDEN);
+        }
+
         Enum.AccountType accountType = userInfo.getAccountType();
-        if (accountType.equals(Enum.AccountType.Person)) {
-            EventRegistration eventRegistration = EventRegistration.builder()
+        if (accountType.equals(Enum.AccountType.Organization)) {
+            return new ResponseEntity<String>("Organizations are not allowed to register for events", HttpStatus.FORBIDDEN);
+        }
+
+        int registrationCount = eventRegistrationService.getEventRegistrationCount(eventId);
+        if (registrationCount >= event.getMaxParticipants()) {
+            return new ResponseEntity<String>("The max registrations have already been completed", HttpStatus.FORBIDDEN);
+        }
+
+        if (eventRegistrationService.checkIfAlreadyRegistered(event, userInfo)) {
+            return new ResponseEntity<String>("You cannot register for the same event twice", HttpStatus.FORBIDDEN);
+        }
+
+
+        EventRegistration eventRegistration = EventRegistration.builder()
                 .event(event)
                 .userInfo(userInfo)
                 .isApproved(isApproved)
                 .isPaid(isPaid)
                 .build();
 
-            long eventRegistrationId = eventRegistrationService.insert(eventRegistration);
-            return new ResponseEntity<String>("Successfully registered for event with id: " + eventRegistrationId, HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<String>("Organizations are not allowed to register for events", HttpStatus.FORBIDDEN);
-        }
+        long eventRegistrationId = eventRegistrationService.insert(eventRegistration);
+        return new ResponseEntity<String>("Successfully registered for event with id: " + eventRegistrationId, HttpStatus.CREATED);
     }
 
     @PutMapping("/pay")

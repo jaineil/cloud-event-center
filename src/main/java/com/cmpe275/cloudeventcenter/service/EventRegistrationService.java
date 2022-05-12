@@ -31,6 +31,10 @@ public class EventRegistrationService {
         eventRegistrationRepository.save(eventRegistration);
     }
 
+    public int getEventRegistrationCount(long eventId) {
+        return eventRegistrationRepository.getEventRegistrationCount(eventId);
+    }
+
     public boolean isUserRegistered(Event event, UserInfo userInfo) {
         EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByEventAndUserInfo(event, userInfo);
         if (eventRegistration.getIsApproved() == false) {
@@ -39,4 +43,15 @@ public class EventRegistrationService {
             return true;
         }
     }
+
+    public boolean checkIfAlreadyRegistered(Event event, UserInfo userInfo) {
+        EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByEventAndUserInfo(event, userInfo);
+        try {
+            eventRegistration.getEvent();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }
