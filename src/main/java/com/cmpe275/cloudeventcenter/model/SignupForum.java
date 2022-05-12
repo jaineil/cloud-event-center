@@ -37,4 +37,7 @@ public class SignupForum {
 
     @Column(name = "EVENT_ID")
     private long eventId;
+
+    @Transient
+    private boolean isByOrganizer;
 }

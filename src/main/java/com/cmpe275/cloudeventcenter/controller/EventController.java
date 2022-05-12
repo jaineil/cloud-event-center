@@ -3,10 +3,13 @@ package com.cmpe275.cloudeventcenter.controller;
 import com.cmpe275.cloudeventcenter.model.Address;
 import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.model.UserInfo;
+import com.cmpe275.cloudeventcenter.repository.EventRegistrationRepository;
 import com.cmpe275.cloudeventcenter.service.AddressService;
+import com.cmpe275.cloudeventcenter.service.EventRegistrationService;
 import com.cmpe275.cloudeventcenter.service.EventService;
 import com.cmpe275.cloudeventcenter.service.UserService;
 import com.cmpe275.cloudeventcenter.utils.Enum;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.coyote.Response;
 import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +38,9 @@ public class EventController {
 
         @Autowired
         private UserService userService;
+
+        @Autowired
+        private EventRegistrationService eventRegistrationService;
 
         @PostMapping()
         public ResponseEntity<String> createEventAPI(
@@ -73,7 +81,7 @@ public class EventController {
                 LocalDateTime currentTime = LocalDateTime.now();
                 if ((startTime.isBefore(currentTime)) || (endTime.isBefore(currentTime))) {
                         return new ResponseEntity<String>("Start and end time must be in the future", HttpStatus.BAD_REQUEST);
-                } else if (startTime.isBefore(endTime)) {
+                } else if (startTime.isAfter(endTime)) {
                         return new ResponseEntity<String>("Start time must be before end time", HttpStatus.BAD_REQUEST);
                 } else if (deadline.isAfter(startTime)) {
                         return new ResponseEntity<String>("Deadline must not be after the start time", HttpStatus.BAD_REQUEST);
@@ -81,6 +89,10 @@ public class EventController {
                         return new ResponseEntity<String>("Minimum and maximum participants must not be negative", HttpStatus.BAD_REQUEST);
                 } else if (maxParticipants < minParticipants) {
                         return new ResponseEntity<String>("Minimum participants cannot be greater than maximum participants", HttpStatus.BAD_REQUEST);
+                } else if ((userInfo.getAccountType().equals(Enum.AccountType.Person))) {
+                        if (fee > 0) {
+                                return new ResponseEntity<String>("Only events created by an organization can require a fee", HttpStatus.BAD_REQUEST);
+                        }
                 }
 
                 Event event = Event.builder()
@@ -134,6 +146,14 @@ public class EventController {
                                 endTime,
                                 keyword,
                                 organizer);
+
+                List<Event> returnList = new ArrayList<Event>();
+                for (Event e: allEvents) {
+                        e.setRegistrationCount(eventRegistrationService.getEventRegistrationCount(e.getEventId()));
+                        returnList.add(e);
+                }
+                allEvents.clear();
+                allEvents.addAll(returnList);
                 return new ResponseEntity<List>(allEvents, HttpStatus.OK);
         }
 
@@ -143,13 +163,4 @@ public class EventController {
                 Event event = eventService.getEventById(eventId);
                 return new ResponseEntity<Event>(event, HttpStatus.OK);
         }
-
-//        @PutMapping("/signup-read-only")
-//        public ResponseEntity<String> signupFormReadOnlyAPI(
-//                @RequestBody Map<?,?> eventRegReq
-//        ) {
-//                long eventId = (long) (int) eventRegReq.get("eventId");
-//                eventService.makeSignupFormReadOnly(eventId);
-//                return new ResponseEntity<String>("Successfully approved registration with id: " + eventId, HttpStatus.CREATED);
-//        }
 }
