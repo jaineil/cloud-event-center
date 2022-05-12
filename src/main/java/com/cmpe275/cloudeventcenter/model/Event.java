@@ -69,6 +69,9 @@ public class Event {
     @Column(name = "IS_PARTICIPANT_FORUM_READ_ONLY", columnDefinition = "boolean default false")
     private Boolean isParticipantForumReadOnly;
 
+    @Transient
+    private int registrationCount;
+
 //    @OneToMany(fetch = FetchType.LAZY, mappedBy = "eventId")
 //    private List<EventRegistration> eventRegistrationList;
 

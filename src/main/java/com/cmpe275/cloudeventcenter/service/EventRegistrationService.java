@@ -37,10 +37,10 @@ public class EventRegistrationService {
 
     public boolean isUserRegistered(Event event, UserInfo userInfo) {
         EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByEventAndUserInfo(event, userInfo);
-        if (eventRegistration.getIsApproved() == false) {
-            return false;
-        } else {
+        if ((eventRegistration.getIsApproved() == true) && (eventRegistration.getIsPaid())) {
             return true;
+        } else {
+            return false;
         }
     }
 
