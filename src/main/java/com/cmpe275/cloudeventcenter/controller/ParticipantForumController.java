@@ -38,7 +38,7 @@ public class ParticipantForumController {
         Integer eventIdInt = Integer.parseInt(eventIdStr);
         Long eventId = Long.valueOf(eventIdInt);
 
-        if (eventService.isParticipantForumReadOnly(eventId) == true) {
+        if (eventService.isParticipantForumReadOnly(eventId)) {
             return new ResponseEntity<>("Participant forum is read-only now", HttpStatus.NOT_FOUND);
         }
 
@@ -72,5 +72,24 @@ public class ParticipantForumController {
         List<ParticipantForum> messageList = participantForumService.getAllMessagesForEvent(eventId);
 
         return new ResponseEntity<>(messageList, HttpStatus.OK);
+    }
+
+    @GetMapping("/checkAccess")
+    @ResponseBody
+    public ResponseEntity<Boolean> getAllMessages(
+            @RequestParam String userId,
+            @RequestParam long eventId
+    ) {
+        Event event = eventService.getEventById(eventId);
+        UserInfo userInfo = userService.getUserInfo(userId);
+        try {
+            if ((userId.equals(event.getUserInfo().getUserId())) || eventRegistrationService.isUserRegistered(event, userInfo)) {
+                return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.cmpe275.cloudeventcenter.controller;
 import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.model.SignupForum;
 import com.cmpe275.cloudeventcenter.model.UserInfo;
+import com.cmpe275.cloudeventcenter.service.EventRegistrationService;
 import com.cmpe275.cloudeventcenter.service.EventService;
 import com.cmpe275.cloudeventcenter.service.SignupForumService;
 import com.cmpe275.cloudeventcenter.service.UserService;
@@ -22,6 +23,8 @@ public class SignupForumController {
     @Autowired private SignupForumService signupForumService;
     @Autowired private UserService userService;
     @Autowired private EventService eventService;
+
+    @Autowired private EventRegistrationService eventRegistrationService;
 
     @PostMapping("/addMessage")
     public ResponseEntity<?> saveMessage(

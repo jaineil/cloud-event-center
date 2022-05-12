@@ -37,16 +37,12 @@ public class EventRegistrationService {
 
     public boolean isUserRegistered(Event event, UserInfo userInfo) {
         EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByEventAndUserInfo(event, userInfo);
-        if ((eventRegistration.getIsApproved() == true) && (eventRegistration.getIsPaid())) {
-            return true;
-        } else {
-            return false;
-        }
+        return (eventRegistration.getIsApproved()) && (eventRegistration.getIsPaid());
     }
 
     public boolean checkIfAlreadyRegistered(Event event, UserInfo userInfo) {
-        EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByEventAndUserInfo(event, userInfo);
         try {
+            EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByEventAndUserInfo(event, userInfo);
             eventRegistration.getEvent();
             return true;
         } catch (Exception e) {
