@@ -66,9 +66,22 @@ public class EventController {
                 int maxParticipants = (int) eventReq.get("maxParticipants");
                 double fee = (double) eventReq.get("fee");
                 String imageUrl = String.valueOf(eventReq.get("imageUrl"));
-                Enum.AdmissionPolicy admissionPolicy = Enum.AdmissionPolicy
-                                .valueOf((String) eventReq.get("admissionPolicy"));
+                Enum.AdmissionPolicy admissionPolicy = Enum.AdmissionPolicy.valueOf((String) eventReq.get("admissionPolicy"));
+
                 Enum.EventStatus eventStatus = Enum.EventStatus.valueOf("SignUpOpen");
+
+                LocalDateTime currentTime = LocalDateTime.now();
+                if ((startTime.isBefore(currentTime)) || (endTime.isBefore(currentTime))) {
+                        return new ResponseEntity<String>("Start and end time must be in the future", HttpStatus.BAD_REQUEST);
+                } else if (startTime.isBefore(endTime)) {
+                        return new ResponseEntity<String>("Start time must be before end time", HttpStatus.BAD_REQUEST);
+                } else if (deadline.isAfter(startTime)) {
+                        return new ResponseEntity<String>("Deadline must not be after the start time", HttpStatus.BAD_REQUEST);
+                } else if ((minParticipants < 0) || (maxParticipants < 0)) {
+                        return new ResponseEntity<String>("Minimum and maximum participants must not be negative", HttpStatus.BAD_REQUEST);
+                } else if (maxParticipants < minParticipants) {
+                        return new ResponseEntity<String>("Minimum participants cannot be greater than maximum participants", HttpStatus.BAD_REQUEST);
+                }
 
                 Event event = Event.builder()
                                 .userInfo(userInfo)
