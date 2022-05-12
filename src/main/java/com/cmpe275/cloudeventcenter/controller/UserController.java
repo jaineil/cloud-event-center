@@ -5,6 +5,7 @@ import com.cmpe275.cloudeventcenter.model.UserInfo;
 import com.cmpe275.cloudeventcenter.service.AddressService;
 import com.cmpe275.cloudeventcenter.service.UserService;
 import com.cmpe275.cloudeventcenter.utils.Enum;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,6 @@ public class UserController {
                 .build();
 
         addressService.insert(address);
-
         String userId = String.valueOf(reqBody.get("userId"));
         String accountTypeString = String.valueOf(reqBody.get("accountType"));
         Enum.AccountType accountType = Enum.AccountType.valueOf(accountTypeString);
@@ -73,5 +73,15 @@ public class UserController {
     ) {
         boolean ifUserExists = userService.checkIfUserExists(userId);
         return new ResponseEntity<>(ifUserExists, HttpStatus.OK);
+    }
+
+    @GetMapping("/getUser/{userId}")
+    @ResponseBody
+    public ResponseEntity<?> getUserInfo(
+    @PathVariable String userId
+    ) {
+        System.out.println(userId);
+        UserInfo userInfo = userService.getUserInfo(userId);
+        return new ResponseEntity<>(userInfo,HttpStatus.OK);
     }
 }
