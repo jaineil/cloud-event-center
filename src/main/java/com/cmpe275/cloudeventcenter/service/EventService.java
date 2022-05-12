@@ -34,16 +34,15 @@ public class EventService {
             LocalDateTime startTime,
             LocalDateTime endTime,
             String keyword,
-            String organizer
-    ) {
+            String organizer) {
         List<Event> allEvents = eventRepository.findAll();
         List<Event> filteredEvents = new ArrayList<Event>();
 
         System.out.println("Number of total events: " + allEvents.size());
 
-        //location: empty: match all, otherwise match city of event
+        // location: empty: match all, otherwise match city of event
         if ((location != null) && (!location.isEmpty())) {
-            for (Event e: allEvents) {
+            for (Event e : allEvents) {
                 if (e.getAddress().getCity().equalsIgnoreCase(location)) {
                     filteredEvents.add(e);
                 }
@@ -55,7 +54,7 @@ public class EventService {
         System.out.println("Number of events after filtering by location: " + allEvents.size());
 
         List<Enum.EventStatus> requiredStatuses = new ArrayList<>();
-        if ((eventStatus == null) || (eventStatus.isEmpty()) || (eventStatus.equalsIgnoreCase("active")) ) {
+        if ((eventStatus == null) || (eventStatus.isEmpty()) || (eventStatus.equalsIgnoreCase("active"))) {
             requiredStatuses.add(Enum.EventStatus.SignUpOpen);
             requiredStatuses.add(Enum.EventStatus.SignUpClosed);
             requiredStatuses.add(Enum.EventStatus.Ongoing);
@@ -72,7 +71,7 @@ public class EventService {
             return Collections.emptyList();
         }
 
-        for (Event e: allEvents) {
+        for (Event e : allEvents) {
             // status: active / openForRegistration / all
             if (requiredStatuses.contains(e.getEventStatus())) {
                 filteredEvents.add(e);
@@ -89,7 +88,7 @@ public class EventService {
         if (endTime == null) {
             endTime = LocalDateTime.parse("2100-12-12T00:00");
         }
-        for (Event e: allEvents) {
+        for (Event e : allEvents) {
             if (e.getStartTime().isAfter(startTime) && (e.getEndTime().isBefore(endTime))) {
                 filteredEvents.add(e);
             }
@@ -129,9 +128,18 @@ public class EventService {
     }
 
     public Event getEventById(
-            long eventId
-    ) {
+            long eventId) {
         Event event = eventRepository.getEventByEventId(eventId);
         return event;
+    }
+
+    public boolean isSignupForumReadOnly(long eventId) {
+        Event event = getEventById(eventId);
+        return event.getIsSignUpForumReadOnly();
+    }
+
+    public boolean isParticipantForumReadOnly(long eventId) {
+        Event event = getEventById(eventId);
+        return event.getIsSignUpForumReadOnly();
     }
 }

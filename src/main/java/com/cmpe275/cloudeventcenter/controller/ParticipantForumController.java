@@ -1,8 +1,10 @@
 package com.cmpe275.cloudeventcenter.controller;
 
+import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.model.ParticipantForum;
-import com.cmpe275.cloudeventcenter.model.SignupForum;
 import com.cmpe275.cloudeventcenter.model.UserInfo;
+import com.cmpe275.cloudeventcenter.service.EventRegistrationService;
+import com.cmpe275.cloudeventcenter.service.EventService;
 import com.cmpe275.cloudeventcenter.service.ParticipantForumService;
 import com.cmpe275.cloudeventcenter.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +21,14 @@ import java.util.Map;
 public class ParticipantForumController {
     @Autowired private ParticipantForumService participantForumService;
     @Autowired private UserService userService;
+    @Autowired private EventService eventService;
+    @Autowired private EventRegistrationService eventRegistrationService;
 
     @PostMapping("/addMessage")
     public ResponseEntity<?> saveMessage(
             @RequestBody Map<?,?> reqBody
     ) {
+
         String userId = String.valueOf(reqBody.get("userId"));
         UserInfo fetchedUser = userService.getUserInfo(userId);
 
@@ -32,6 +37,16 @@ public class ParticipantForumController {
         String eventIdStr = String.valueOf(reqBody.get("eventId"));
         Integer eventIdInt = Integer.parseInt(eventIdStr);
         Long eventId = Long.valueOf(eventIdInt);
+
+        if (eventService.isParticipantForumReadOnly(eventId) == true) {
+            return new ResponseEntity<>("Participant forum is read-only now", HttpStatus.NOT_FOUND);
+        }
+
+        Event event = eventService.getEventById(eventId);
+        UserInfo userInfo = userService.getUserInfo(userId);
+        if (!eventRegistrationService.isUserRegistered(event, userInfo)) {
+            return new ResponseEntity<>("User is not a participant of the event", HttpStatus.NOT_FOUND);
+        }
 
         ParticipantForum message = ParticipantForum.builder()
                 .userInfo(fetchedUser)
