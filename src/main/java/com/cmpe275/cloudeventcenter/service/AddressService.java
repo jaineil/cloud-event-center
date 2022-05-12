@@ -11,9 +11,9 @@ public class AddressService {
     @Autowired
     private AddressRepository addressRepository;
 
-    public long insert(Address address) {
-        long addressId = addressRepository.save(address).getAddressId();
-        return addressId;
+    public void insert(Address address) {
+        addressRepository.save(address);
+        return;
     }
 
 }
