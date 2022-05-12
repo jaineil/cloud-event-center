@@ -15,16 +15,20 @@ import java.util.List;
 @Table(name = "USER_INFO")
 public class UserInfo {
     @Id
-    @Column(name = "USER_ID")
+    @Column(name = "USER_ID", unique = true)
     private String userId; // received from Firebase
 
+    @Column(name = "EMAIL_ID", unique = true)
+    private String emailId; // received from Firebase
+
+    @Column(name = "ACCOUNT_TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
     private Enum.AccountType accountType;
 
-    @Column(name = "FULL_NAME")
+    @Column(name = "FULL_NAME", nullable = false)
     private String fullName;
 
-    @Column(name = "SCREEN_NAME")
+    @Column(name = "SCREEN_NAME", unique = true)
     private String screenName;
 
     @Column(name = "GENDER")
