@@ -26,6 +26,11 @@ public class EventService {
         return allEvents;
     }
 
+    public List<Event> getAllEventsByDeadline(LocalDateTime virtualTime) {
+        List<Event> events = eventRepository.getAllByDeadlineBefore(virtualTime);
+        return events;
+    }
+
     public List searchEvents(
             String location,
             String eventStatus,
