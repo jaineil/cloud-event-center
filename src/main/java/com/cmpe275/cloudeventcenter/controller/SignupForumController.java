@@ -1,7 +1,9 @@
 package com.cmpe275.cloudeventcenter.controller;
 
+import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.model.SignupForum;
 import com.cmpe275.cloudeventcenter.model.UserInfo;
+import com.cmpe275.cloudeventcenter.service.EventRegistrationService;
 import com.cmpe275.cloudeventcenter.service.EventService;
 import com.cmpe275.cloudeventcenter.service.SignupForumService;
 import com.cmpe275.cloudeventcenter.service.UserService;
@@ -10,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +23,8 @@ public class SignupForumController {
     @Autowired private SignupForumService signupForumService;
     @Autowired private UserService userService;
     @Autowired private EventService eventService;
+
+    @Autowired private EventRegistrationService eventRegistrationService;
 
     @PostMapping("/addMessage")
     public ResponseEntity<?> saveMessage(
@@ -35,7 +40,7 @@ public class SignupForumController {
         Integer eventIdInt = Integer.parseInt(eventIdStr);
         Long eventId = Long.valueOf(eventIdInt);
 
-        if (!eventService.isSignupForumReadOnly(eventId)) {
+        if (eventService.isSignupForumReadOnly(eventId)) {
             return new ResponseEntity<>("Sign-up forum is read-only now", HttpStatus.NOT_FOUND);
         }
 
@@ -61,7 +66,20 @@ public class SignupForumController {
         Integer eventIdInt = Integer.parseInt(eventIdStr);
         Long eventId = Long.valueOf(eventIdInt);
         List<SignupForum> messageList = signupForumService.getAllMessagesForEvent(eventId);
-
+        List<SignupForum> finalMessageList = new ArrayList<SignupForum>();
+        for (SignupForum m: messageList) {
+            long messageEventId = m.getEventId();
+            Event messageEvent = eventService.getEventById(messageEventId);
+            String organizerId = messageEvent.getUserInfo().getUserId();
+            if (m.getUserInfo().getUserId().equals(organizerId)) {
+                m.setByOrganizer(true);
+            } else {
+                m.setByOrganizer(false);
+            }
+            finalMessageList.add(m);
+        }
+        messageList.clear();
+        messageList.addAll(finalMessageList);
         return new ResponseEntity<>(messageList, HttpStatus.OK);
     }
 }

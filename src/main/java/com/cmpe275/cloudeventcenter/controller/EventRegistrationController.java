@@ -63,6 +63,10 @@ public class EventRegistrationController {
         }
 
 
+        if (event.getAdmissionPolicy().equals(Enum.AdmissionPolicy.FirstComeFirstServe)) {
+            isApproved = true;
+        }
+
         EventRegistration eventRegistration = EventRegistration.builder()
                 .event(event)
                 .userInfo(userInfo)
