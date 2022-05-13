@@ -37,4 +37,8 @@ public class UserService {
         UserInfo fetchedUser = userRepository.findUserInfoByUserId(userId);
         return fetchedUser;
     }
+
+//    public boolean checkIfUserIsOrganizer(String userId){
+//
+//    }
 }

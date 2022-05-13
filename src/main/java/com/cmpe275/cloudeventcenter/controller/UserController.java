@@ -4,9 +4,12 @@ import com.cmpe275.cloudeventcenter.model.Address;
 import com.cmpe275.cloudeventcenter.model.UserInfo;
 import com.cmpe275.cloudeventcenter.service.AddressService;
 import com.cmpe275.cloudeventcenter.service.UserService;
+import com.cmpe275.cloudeventcenter.utils.EmailNotifierService;
 import com.cmpe275.cloudeventcenter.utils.Enum;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +25,25 @@ public class UserController {
 
     @Autowired
     private AddressService addressService;
+
+    @Autowired
+    private EmailNotifierService emailNotifierService;
+
+    @GetMapping("/signupMail/{email}")
+    @ResponseBody
+    public ResponseEntity<?> triggerSignupMail(
+            @PathVariable String email
+    ){
+
+        emailNotifierService.notify(
+                email,
+                "Welcome to CEC",
+                "Hi,\n\nYour account has been successfully created. " +
+                        "You will shortly receive a mail verification link."+
+                        "\n\n CEC Team"
+        );
+        return new ResponseEntity<>("Mail sent to "+email,HttpStatus.OK);
+    }
 
     @PostMapping("/createUser")
     public ResponseEntity<?> saveUserInfo(
@@ -82,6 +104,9 @@ public class UserController {
     ) {
         System.out.println(userId);
         UserInfo userInfo = userService.getUserInfo(userId);
+
+
         return new ResponseEntity<>(userInfo,HttpStatus.OK);
     }
+
 }
