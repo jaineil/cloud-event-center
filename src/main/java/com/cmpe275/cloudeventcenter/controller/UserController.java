@@ -7,8 +7,6 @@ import com.cmpe275.cloudeventcenter.service.UserService;
 import com.cmpe275.cloudeventcenter.utils.EmailNotifierService;
 import com.cmpe275.cloudeventcenter.utils.Enum;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +30,7 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<?> triggerSignupMail(
             @PathVariable String email
-    ){
+    ) {
 
         emailNotifierService.notify(
                 email,
@@ -136,8 +134,6 @@ public class UserController {
         System.out.println(userId);
         UserInfo userInfo = userService.getUserInfo(userId);
 
-
         return new ResponseEntity<>(userInfo,HttpStatus.OK);
     }
-
 }
