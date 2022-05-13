@@ -23,12 +23,12 @@ public class Address {
     @Column(name = "APARTMENT")
     private String apartment;
 
-    @Column(name = "CITY")
+    @Column(name = "CITY", nullable = false)
     private String city;
 
-    @Column(name = "STATE")
+    @Column(name = "STATE", nullable = false)
     private String state;
 
-    @Column(name = "ZIPCODE")
+    @Column(name = "ZIPCODE", nullable = false)
     private String zipcode;
 }
