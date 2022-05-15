@@ -73,6 +73,8 @@ public class VirtualClockService {
                      if (event.getIsParticipantForumReadOnly() == false) {
                          event.setIsParticipantForumReadOnly(true);
                      }
+                     event.setParticipantForumStatus(Enum.ParticipantForumStatus.ClosedBecauseEventCancelled);
+
                  } else {
                      System.out.println("Finishing the event");
                      event.setEventStatus(Enum.EventStatus.Finished);
@@ -83,6 +85,9 @@ public class VirtualClockService {
                          if (event.getIsParticipantForumReadOnly() == false) {
                             event.setIsParticipantForumReadOnly(true);
                         }
+                         if (!event.getParticipantForumStatus().equals(Enum.ParticipantForumStatus.ClosedBecauseManuallyClosed)) {
+                             event.setParticipantForumStatus(Enum.ParticipantForumStatus.ClosedBecauseAutomatic72HourExpiry);
+                         }
                      }
                  }
              }
@@ -106,6 +111,7 @@ public class VirtualClockService {
                      if (event.getIsParticipantForumReadOnly() == false) {
                          event.setIsParticipantForumReadOnly(true);
                      }
+                     event.setParticipantForumStatus(Enum.ParticipantForumStatus.ClosedBecauseEventCancelled);
                  } else {
                      long eventStatusFlag = event.getStartTime().until(virtualTime, ChronoUnit.HOURS ); // difference in hours
                      if (eventStatusFlag < 0) {
@@ -117,6 +123,7 @@ public class VirtualClockService {
                      if (event.getIsSignUpForumReadOnly() == false) {
                          event.setIsSignUpForumReadOnly(true);
                      }
+                     event.setParticipantForumStatus(Enum.ParticipantForumStatus.Open);
                  }
              }
 
