@@ -132,12 +132,12 @@ public class EventController {
                         @RequestParam(required = false) String keyword,
                         @RequestParam(required = false) String organizer) {
 
-//                System.out.println(location);
-//                System.out.println(eventStatus);
-//                System.out.println(startTime);
-//                System.out.println(endTime);
-//                System.out.println(keyword);
-//                System.out.println(organizer);
+                System.out.println(location);
+                System.out.println(eventStatus);
+                System.out.println(startTime);
+                System.out.println(endTime);
+                System.out.println(keyword);
+                System.out.println(organizer);
 //
                 List<Event> allEvents = eventService.searchEvents(
                                 location,
