@@ -37,15 +37,21 @@ public class ParticipantForumController {
         String eventIdStr = String.valueOf(reqBody.get("eventId"));
         Integer eventIdInt = Integer.parseInt(eventIdStr);
         Long eventId = Long.valueOf(eventIdInt);
-
+        System.out.println(messageText);
+        System.out.println(imageUrl);
+        System.out.println(eventId);
+        System.out.println(userId);
         if (eventService.isParticipantForumReadOnly(eventId)) {
             return new ResponseEntity<>("Participant forum is read-only now", HttpStatus.NOT_FOUND);
         }
 
         Event event = eventService.getEventById(eventId);
         UserInfo userInfo = userService.getUserInfo(userId);
+
         if (!eventRegistrationService.isUserRegistered(event, userInfo)) {
-            return new ResponseEntity<>("User is not a participant of the event", HttpStatus.NOT_FOUND);
+            if (!userId.equals(event.getUserInfo().getUserId())) {
+                return new ResponseEntity<>("User is not a participant of the event", HttpStatus.NOT_FOUND);
+            }
         }
 
         ParticipantForum message = ParticipantForum.builder()

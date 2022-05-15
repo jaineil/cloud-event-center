@@ -70,9 +70,9 @@ public class EventController {
                 LocalDateTime startTime = LocalDateTime.parse((CharSequence) eventReq.get("startTime"));
                 LocalDateTime endTime = LocalDateTime.parse((CharSequence) eventReq.get("endTime"));
                 LocalDateTime deadline = LocalDateTime.parse((CharSequence) eventReq.get("deadline"));
-                int minParticipants = (int) eventReq.get("minParticipants");
-                int maxParticipants = (int) eventReq.get("maxParticipants");
-                double fee = (double) eventReq.get("fee");
+                Integer minParticipants = Integer.parseInt(String.valueOf(eventReq.get("minParticipants")));
+                Integer maxParticipants = Integer.parseInt(String.valueOf(eventReq.get("maxParticipants")));
+                Double fee = Double.parseDouble(String.valueOf(eventReq.get("fee")));
                 String imageUrl = String.valueOf(eventReq.get("imageUrl"));
                 Enum.AdmissionPolicy admissionPolicy = Enum.AdmissionPolicy.valueOf((String) eventReq.get("admissionPolicy"));
 
@@ -161,6 +161,7 @@ public class EventController {
         public ResponseEntity<Event> getEventByIdAPI(
                         @PathVariable("eventId") long eventId) {
                 Event event = eventService.getEventById(eventId);
+                event.setRegistrationCount(eventRegistrationService.getEventRegistrationCount(event.getEventId()));
                 return new ResponseEntity<Event>(event, HttpStatus.OK);
         }
 }
