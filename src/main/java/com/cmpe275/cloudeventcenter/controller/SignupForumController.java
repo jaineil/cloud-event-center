@@ -82,6 +82,4 @@ public class SignupForumController {
         messageList.addAll(finalMessageList);
         return new ResponseEntity<>(messageList, HttpStatus.OK);
     }
-
-
 }
