@@ -1,6 +1,7 @@
 package com.cmpe275.cloudeventcenter.model;
 
 import com.cmpe275.cloudeventcenter.model.UserInfo;
+import com.cmpe275.cloudeventcenter.utils.Enum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

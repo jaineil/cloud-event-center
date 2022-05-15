@@ -69,6 +69,9 @@ public class Event {
     @Column(name = "IS_PARTICIPANT_FORUM_READ_ONLY", columnDefinition = "boolean default false")
     private Boolean isParticipantForumReadOnly;
 
+    @Enumerated(EnumType.STRING)
+    private Enum.ParticipantForumStatus participantForumStatus;
+
     @Transient
     private int registrationCount;
 

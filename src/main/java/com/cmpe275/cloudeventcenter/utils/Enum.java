@@ -19,4 +19,12 @@ public class Enum {
         Person,
         Organization
     }
+
+    public enum ParticipantForumStatus {
+        NotCreatedYet,
+        Open,
+        ClosedBecauseEventCancelled,
+        ClosedBecauseManuallyClosed,
+        ClosedBecauseAutomatic72HourExpiry,
+    }
 }

@@ -3,11 +3,9 @@ package com.cmpe275.cloudeventcenter.controller;
 import com.cmpe275.cloudeventcenter.model.Address;
 import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.model.UserInfo;
+import com.cmpe275.cloudeventcenter.model.VirtualClock;
 import com.cmpe275.cloudeventcenter.repository.EventRegistrationRepository;
-import com.cmpe275.cloudeventcenter.service.AddressService;
-import com.cmpe275.cloudeventcenter.service.EventRegistrationService;
-import com.cmpe275.cloudeventcenter.service.EventService;
-import com.cmpe275.cloudeventcenter.service.UserService;
+import com.cmpe275.cloudeventcenter.service.*;
 import com.cmpe275.cloudeventcenter.utils.Enum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.coyote.Response;
@@ -42,6 +40,9 @@ public class EventController {
         @Autowired
         private EventRegistrationService eventRegistrationService;
 
+        @Autowired
+        private VirtualClockService virtualClockService;
+
         @PostMapping()
         public ResponseEntity<String> createEventAPI(
                         @RequestBody Map<?, ?> eventReq) {
@@ -75,10 +76,10 @@ public class EventController {
                 Double fee = Double.parseDouble(String.valueOf(eventReq.get("fee")));
                 String imageUrl = String.valueOf(eventReq.get("imageUrl"));
                 Enum.AdmissionPolicy admissionPolicy = Enum.AdmissionPolicy.valueOf((String) eventReq.get("admissionPolicy"));
-
                 Enum.EventStatus eventStatus = Enum.EventStatus.valueOf("SignUpOpen");
+                Enum.ParticipantForumStatus participantForumStatus = Enum.ParticipantForumStatus.valueOf("NotCreatedYet");
 
-                LocalDateTime currentTime = LocalDateTime.now();
+                LocalDateTime currentTime = virtualClockService.getVirtualClock().getLocalDateTime();
                 if ((startTime.isBefore(currentTime)) || (endTime.isBefore(currentTime))) {
                         return new ResponseEntity<String>("Start and end time must be in the future", HttpStatus.BAD_REQUEST);
                 } else if (startTime.isAfter(endTime)) {
@@ -111,6 +112,7 @@ public class EventController {
                                 .eventStatus(eventStatus)
                                 .isSignUpForumReadOnly(false)
                                 .isParticipantForumReadOnly(false)
+                                .participantForumStatus(Enum.ParticipantForumStatus.NotCreatedYet)
                                 .build();
 
                 long eventId = eventService.insert(event);
@@ -138,7 +140,10 @@ public class EventController {
                 System.out.println(endTime);
                 System.out.println(keyword);
                 System.out.println(organizer);
-//
+
+//                System.out.println("Real time: " + LocalDateTime.now());
+//                System.out.println("Virtual time: " + virtualClockService.getVirtualClock().getLocalDateTime());
+
                 List<Event> allEvents = eventService.searchEvents(
                                 location,
                                 eventStatus,
