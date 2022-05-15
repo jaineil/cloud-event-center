@@ -169,4 +169,13 @@ public class EventController {
                 event.setRegistrationCount(eventRegistrationService.getEventRegistrationCount(event.getEventId()));
                 return new ResponseEntity<Event>(event, HttpStatus.OK);
         }
+
+        @GetMapping("/byOrganizer/{organizerId}")
+        public ResponseEntity<List> getAllEventsByOrganizer(
+                @PathVariable("organizerId") String organizerId
+        ) {
+                UserInfo userInfo = userService.getUserInfo(organizerId);
+                List<Event> allEvents = eventService.getAllEventsByOrganizer(userInfo);
+                return new ResponseEntity<List>(allEvents, HttpStatus.OK);
+        }
 }
