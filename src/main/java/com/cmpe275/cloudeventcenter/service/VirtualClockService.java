@@ -43,6 +43,17 @@ public class VirtualClockService {
          }
      }
 
+     public boolean isValidSimulationTime(LocalDateTime incomingVirtualTime) {
+         VirtualClock virtualClock = virtualClockRepository.findTopByOrderByLocalDateTimeDesc();
+         LocalDateTime lastVirtualTime = virtualClock.getLocalDateTime();
+         long delta = lastVirtualTime.until(incomingVirtualTime, ChronoUnit.HOURS);
+         System.out.println("Delta: " + delta);
+         long year = 365 * 24;
+         if (delta < 0 || delta > year) {
+             return false;
+         } else return true;
+     }
+
      @Transactional
      public void simulate(LocalDateTime virtualTime) {
          List<Event> events = eventService.getAllEventsByDeadline(virtualTime);
