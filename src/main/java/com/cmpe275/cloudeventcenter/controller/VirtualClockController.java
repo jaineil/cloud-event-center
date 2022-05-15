@@ -30,6 +30,9 @@ public class VirtualClockController {
     public ResponseEntity<?> simulate(@PathVariable String virtualTimeStr) {
         LocalDateTime virtualTime = LocalDateTime.parse(virtualTimeStr);
         System.out.println(virtualTime);
+        if(!virtualClockService.isValidSimulationTime(virtualTime)) {
+            return new ResponseEntity<>("Not a valid future time, only future time up to 1 year allowed", HttpStatus.BAD_REQUEST);
+        }
         virtualClockService.simulate(virtualTime);
         return new ResponseEntity<>("Simulation done", HttpStatus.OK);
     }
