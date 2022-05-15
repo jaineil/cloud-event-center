@@ -1,7 +1,9 @@
 package com.cmpe275.cloudeventcenter.service;
 
 import com.cmpe275.cloudeventcenter.model.Event;
+import com.cmpe275.cloudeventcenter.model.VirtualClock;
 import com.cmpe275.cloudeventcenter.repository.EventRepository;
+import com.cmpe275.cloudeventcenter.repository.VirtualClockRepository;
 import com.cmpe275.cloudeventcenter.utils.Enum;
 import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,9 @@ public class EventService {
 
     @Autowired
     private EventRepository eventRepository;
+
+    @Autowired
+    private VirtualClockRepository virtualClockRepository;
 
     public long insert(Event event) {
         long eventId = eventRepository.save(event).getEventId();
@@ -86,11 +91,13 @@ public class EventService {
         System.out.println("Number of events after filtering by status: " + allEvents.size());
 
         if (startTime == null) {
-            startTime = LocalDateTime.now();
+            VirtualClock virtualClock = virtualClockRepository.findTopByOrderByLocalDateTimeDesc();
+            startTime = virtualClock.getLocalDateTime();
         }
         if (endTime == null) {
             endTime = LocalDateTime.parse("2100-12-12T00:00");
         }
+
         for (Event e : allEvents) {
             if (e.getStartTime().isAfter(startTime) && (e.getEndTime().isBefore(endTime))) {
                 filteredEvents.add(e);
