@@ -42,12 +42,16 @@ public class ParticipantForumController {
         System.out.println(imageUrl);
         System.out.println(eventId);
         System.out.println(userId);
-        if (eventService.isParticipantForumReadOnly(eventId)) {
-            return new ResponseEntity<>("Participant forum is read-only now", HttpStatus.NOT_FOUND);
-        }
+//        if (eventService.isParticipantForumReadOnly(eventId)) {
+//            return new ResponseEntity<>("Participant forum is read-only now", HttpStatus.NOT_FOUND);
+//        }
 
         Event event = eventService.getEventById(eventId);
         UserInfo userInfo = userService.getUserInfo(userId);
+
+        if (!event.getParticipantForumStatus().equals(Enum.ParticipantForumStatus.Open)) {
+            return new ResponseEntity<String>(String.valueOf(event.getParticipantForumStatus()), HttpStatus.FORBIDDEN);
+        }
 
         if (!eventRegistrationService.isUserRegistered(event, userInfo)) {
             if (!userId.equals(event.getUserInfo().getUserId())) {

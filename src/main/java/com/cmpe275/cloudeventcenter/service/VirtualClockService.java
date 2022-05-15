@@ -37,6 +37,7 @@ public class VirtualClockService {
              VirtualClock realClock = VirtualClock.builder()
                      .localDateTime(local)
                      .build();
+             virtualClockRepository.save(realClock);
              return realClock;
          } else {
              return virtualClock;

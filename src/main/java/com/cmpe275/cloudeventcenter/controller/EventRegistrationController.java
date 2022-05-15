@@ -80,7 +80,12 @@ public class EventRegistrationController {
                 .build();
 
         long eventRegistrationId = eventRegistrationService.insert(eventRegistration);
-        return new ResponseEntity<String>("Successfully registered for event with id: " + eventRegistrationId, HttpStatus.CREATED);
+        if (isApproved) {
+            return new ResponseEntity<String>("Successfully registered for event" + eventRegistrationId, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<String>("Thanks for your interest. You will be informed as soon as the organizer approves your request" + eventRegistrationId, HttpStatus.CREATED);
+        }
+
     }
 
     @PutMapping("/pay")
