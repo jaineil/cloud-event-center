@@ -41,8 +41,23 @@ public class UserController {
                         "You will shortly receive a mail verification link."+
                         "\n\n CEC Team"
         );
-        return new ResponseEntity<>("Mail sent to "+email,HttpStatus.OK);
+        return new ResponseEntity<>("triggerSignupMail sent to "+email,HttpStatus.OK);
     }
+
+    @GetMapping("/verificationSuccess/{email}")
+    @ResponseBody
+    public ResponseEntity<?> triggerVerifiedMail(
+            @PathVariable String email
+    ){
+
+        emailNotifierService.notify(
+                email,
+                "Email Verification Success",
+                "Hi,\n\nYour account has been successfully successfully verified. \n\n CEC Team"
+        );
+        return new ResponseEntity<>("triggerVerifiedMail sent to "+email,HttpStatus.OK);
+    }
+
 
     @PostMapping("/createUser")
     public ResponseEntity<?> saveUserInfo(
