@@ -2,8 +2,11 @@ package com.cmpe275.cloudeventcenter.model;
 
 import com.cmpe275.cloudeventcenter.utils.Enum;
 import lombok.*;
+import org.apache.catalina.User;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Getter
@@ -19,10 +22,14 @@ public class Event {
     @Column(name = "EVENT_ID")
     private long eventId;
 
+    @OneToOne
+    @JoinColumn(name = "ORGANIZER_ID")
+    private UserInfo userInfo;
+
     @Column(name = "TITLE")
     private String title;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION" , length = 3000)
     private String description;
 
     @Column(name = "START_TIME", columnDefinition = "TIMESTAMP")
@@ -47,55 +54,28 @@ public class Event {
     @Column(name = "FEE")
     private double fee;
 
+    @Column(name = "IMAGE_URL")
+    private String imageUrl;
+
     @Enumerated(EnumType.STRING)
     private Enum.AdmissionPolicy admissionPolicy;
 
     @Enumerated(EnumType.STRING)
     private Enum.EventStatus eventStatus;
 
+    @Column(name = "IS_SIGNUP_FORUM_READ_ONLY", columnDefinition = "boolean default false")
+    private Boolean isSignUpForumReadOnly;
+
+    @Column(name = "IS_PARTICIPANT_FORUM_READ_ONLY", columnDefinition = "boolean default false")
+    private Boolean isParticipantForumReadOnly;
+
+    @Enumerated(EnumType.STRING)
+    private Enum.ParticipantForumStatus participantForumStatus;
+
+    @Transient
+    private int registrationCount;
+
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "eventId")
+//    private List<EventRegistration> eventRegistrationList;
+
 }
-
-
-//public class Player {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "ID")
-//    private long id;
-//
-//    @Column(name = "FIRST_NAME", nullable = false)
-//    private String firstName;
-//
-//    @Column(name = "LAST_NAME", nullable = false)
-//    private String lastName;
-//
-//    @Column(name = "EMAIL", nullable = false, unique = true)
-//    private String email;
-//
-//    @Column(name = "DESCRIPTION")
-//    private String description;
-//
-//    @Embedded
-//    @AttributeOverrides({
-//            @AttributeOverride( name = "street", column = @Column(name = "STREET")),
-//            @AttributeOverride( name = "city", column = @Column(name = "CITY")),
-//            @AttributeOverride( name = "zip", column = @Column(name = "ZIP")),
-//            @AttributeOverride( name = "state", column = @Column(name = "STATE"))
-//    })
-//    private Address address;
-//
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "TEAM_ID")
-//    @JsonIgnoreProperties({"players", "address"})
-//    private Team team;
-//
-//    @ManyToMany(fetch = FetchType.EAGER)
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    @JoinTable(name="OPPONENT",
-//            joinColumns=@JoinColumn(name="playerId"),
-//            inverseJoinColumns=@JoinColumn(name="opponentId")
-//    )
-//    @JsonIgnoreProperties({"address", "team", "opponents"})
-//    private List<Player> opponents;
-//
-//}
-

@@ -20,4 +20,25 @@ public class UserService {
             return;
         }
     }
+
+    public boolean checkIfUserExists(String userId) {
+        try {
+            UserInfo userInfo = userRepository.findUserInfoByUserId(userId);
+            if (userInfo == null) {
+                return false;
+            } else return true;
+        } catch (Exception e) {
+            System.err.println(e);
+            return false;
+        }
+    }
+
+    public UserInfo getUserInfo(String userId) {
+        UserInfo fetchedUser = userRepository.findUserInfoByUserId(userId);
+        return fetchedUser;
+    }
+
+//    public boolean checkIfUserIsOrganizer(String userId){
+//
+//    }
 }
