@@ -8,6 +8,8 @@ import com.cmpe275.cloudeventcenter.utils.Enum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EventRegistrationService {
 
@@ -53,6 +55,10 @@ public class EventRegistrationService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public List getAllApprovalRequests(long eventId) {
+        return eventRegistrationRepository.getAllApprovalRequests(eventId);
     }
 
 }

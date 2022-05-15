@@ -1,6 +1,7 @@
 package com.cmpe275.cloudeventcenter.service;
 
 import com.cmpe275.cloudeventcenter.model.Event;
+import com.cmpe275.cloudeventcenter.model.UserInfo;
 import com.cmpe275.cloudeventcenter.model.VirtualClock;
 import com.cmpe275.cloudeventcenter.repository.EventRepository;
 import com.cmpe275.cloudeventcenter.repository.VirtualClockRepository;
@@ -151,5 +152,10 @@ public class EventService {
     public boolean isParticipantForumReadOnly(long eventId) {
         Event event = getEventById(eventId);
         return event.getIsSignUpForumReadOnly();
+    }
+
+    public List getAllEventsByOrganizer(UserInfo userInfo) {
+        List<Event> allEvents = eventRepository.getAllByUserInfo(userInfo);
+        return allEvents;
     }
 }

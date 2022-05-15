@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -38,8 +39,6 @@ public class EventRegistrationController {
 
         long eventId = (long) (int) eventRegReq.get("eventId");
         String participantId = String.valueOf(eventRegReq.get("participantId"));
-        boolean isApproved = (boolean) eventRegReq.get("isApproved");
-        boolean isPaid = (boolean) eventRegReq.get("isPaid");
 
         Event event = eventService.getEventById(eventId);
         UserInfo userInfo = userService.getUserInfo(participantId);
@@ -53,6 +52,10 @@ public class EventRegistrationController {
             return new ResponseEntity<String>("Organizations are not allowed to register for events", HttpStatus.FORBIDDEN);
         }
 
+        if (!event.getEventStatus().equals(Enum.EventStatus.SignUpOpen)) {{
+            return new ResponseEntity<String>("This event is not accepting registrations any more", HttpStatus.FORBIDDEN);
+        }}
+
         int registrationCount = eventRegistrationService.getEventRegistrationCount(eventId);
         if (registrationCount >= event.getMaxParticipants()) {
             return new ResponseEntity<String>("The max registrations have already been completed", HttpStatus.FORBIDDEN);
@@ -62,9 +65,11 @@ public class EventRegistrationController {
             return new ResponseEntity<String>("You cannot register for the same event twice", HttpStatus.FORBIDDEN);
         }
 
-
+        boolean isApproved = false;
+        boolean isPaid = false;
         if (event.getAdmissionPolicy().equals(Enum.AdmissionPolicy.FirstComeFirstServe)) {
             isApproved = true;
+            isPaid = true;
         }
 
         EventRegistration eventRegistration = EventRegistration.builder()
@@ -96,5 +101,13 @@ public class EventRegistrationController {
         long registrationId = (long) (int) eventRegReq.get("registrationId");
         eventRegistrationService.approveRegistration(registrationId);
         return new ResponseEntity<String>("Successfully approved registration with id: " + registrationId, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/approvalRequests")
+    public ResponseEntity<List> getAllEventsByOrganizer(
+            @RequestParam long eventId
+    ) {
+        List<EventRegistration> approvalRequests = eventRegistrationService.getAllApprovalRequests(eventId);
+        return new ResponseEntity<List>(approvalRequests, HttpStatus.OK);
     }
 }
