@@ -70,9 +70,9 @@ public class EventController {
                 LocalDateTime startTime = LocalDateTime.parse((CharSequence) eventReq.get("startTime"));
                 LocalDateTime endTime = LocalDateTime.parse((CharSequence) eventReq.get("endTime"));
                 LocalDateTime deadline = LocalDateTime.parse((CharSequence) eventReq.get("deadline"));
-                Integer minParticipants = Integer.parseInt(String.valueOf(eventReq.get("minParticipants")));
-                Integer maxParticipants = Integer.parseInt(String.valueOf(eventReq.get("maxParticipants")));
-                Double fee = Double.parseDouble(String.valueOf(eventReq.get("fee")));
+                int minParticipants = Integer.parseInt(String.valueOf(eventReq.get("minParticipants")));
+                int maxParticipants = Integer.parseInt(String.valueOf(eventReq.get("maxParticipants")));
+                double fee = Double.parseDouble(String.valueOf(eventReq.get("fee")));
                 String imageUrl = String.valueOf(eventReq.get("imageUrl"));
                 Enum.AdmissionPolicy admissionPolicy = Enum.AdmissionPolicy.valueOf((String) eventReq.get("admissionPolicy"));
 
