@@ -92,8 +92,8 @@ public class EventService {
         System.out.println("Number of events after filtering by status: " + allEvents.size());
 
         if (startTime == null) {
-            VirtualClock virtualClock = virtualClockRepository.findTopByOrderByLocalDateTimeDesc();
-            startTime = virtualClock.getLocalDateTime();
+            long minutesForwarded = virtualClockRepository.findMinutesForwarded();
+            startTime = LocalDateTime.now().plusMinutes(minutesForwarded);
         }
         if (endTime == null) {
             endTime = LocalDateTime.parse("2100-12-12T00:00");
