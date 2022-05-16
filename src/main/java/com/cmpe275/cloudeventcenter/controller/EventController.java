@@ -79,7 +79,7 @@ public class EventController {
                 Enum.EventStatus eventStatus = Enum.EventStatus.valueOf("SignUpOpen");
                 Enum.ParticipantForumStatus participantForumStatus = Enum.ParticipantForumStatus.valueOf("NotCreatedYet");
 
-                LocalDateTime currentTime = virtualClockService.getVirtualClock().getLocalDateTime();
+                LocalDateTime currentTime = virtualClockService.getVirtualClock();
                 if ((startTime.isBefore(currentTime)) || (endTime.isBefore(currentTime))) {
                         return new ResponseEntity<String>("Start and end time must be in the future", HttpStatus.BAD_REQUEST);
                 } else if (startTime.isAfter(endTime)) {
@@ -142,7 +142,7 @@ public class EventController {
                 System.out.println(organizer);
 
 //                System.out.println("Real time: " + LocalDateTime.now());
-//                System.out.println("Virtual time: " + virtualClockService.getVirtualClock().getLocalDateTime());
+//                System.out.println("Virtual time: " + virtualClockService.getVirtualClock());
 
                 List<Event> allEvents = eventService.searchEvents(
                                 location,

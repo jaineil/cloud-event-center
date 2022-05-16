@@ -113,7 +113,7 @@ public class ParticipantForumController {
         String userId = String.valueOf(bodyReq.get("userId"));
         long eventId = (long) (int) bodyReq.get("eventId");
         Event event = eventService.getEventById(eventId);
-        LocalDateTime currentTime = virtualClockService.getVirtualClock().getLocalDateTime();
+        LocalDateTime currentTime = virtualClockService.getVirtualClock();
 
         if (!(userId.equals(event.getUserInfo().getUserId()))) {
             return new ResponseEntity<String>("Only organizers are allowed to close the participant forum", HttpStatus.FORBIDDEN);

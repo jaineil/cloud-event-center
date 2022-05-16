@@ -21,4 +21,7 @@ public class VirtualClock {
 
     @Column(name = "VIRTUAL_TIME", columnDefinition = "TIMESTAMP")
     private LocalDateTime localDateTime;
+
+    @Column(name = "MINUTES_FORWARDED")
+    private long minutesForwarded = 0;
 }
