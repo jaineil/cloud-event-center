@@ -37,6 +37,18 @@ public class UserInfo {
     @Column(name = "DESCRIPTION", length = 3000)
     private String description;
 
+    @Column(name = "AVG_PARTICIPANT_RATING", columnDefinition = "float default 0.00", precision = 2)
+    private float participantRating;
+
+    @Column(name = "AVG_ORGANIZER_RATING", columnDefinition = "float default 0.00", precision = 2)
+    private float organizerRating;
+
+    @Column(name = "RATINGS_RECEIVED_AS_PARTICIPANT", columnDefinition = "int default 0")
+    private int ratingsReceivedAsParticipant;
+
+    @Column(name = "RATINGS_RECEIVED_AS_ORGANIZER", columnDefinition = "int default 0")
+    private int ratingsReceivedAsOrganizer;
+
     @OneToOne
     @JoinColumn(name = "ADDRESS_ID")
     private Address address;

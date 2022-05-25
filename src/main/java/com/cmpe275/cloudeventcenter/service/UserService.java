@@ -2,6 +2,7 @@ package com.cmpe275.cloudeventcenter.service;
 
 import com.cmpe275.cloudeventcenter.model.UserInfo;
 import com.cmpe275.cloudeventcenter.repository.UserRepository;
+import com.cmpe275.cloudeventcenter.utils.Enum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,31 @@ public class UserService {
     public UserInfo getUserInfo(String userId) {
         UserInfo fetchedUser = userRepository.findUserInfoByUserId(userId);
         return fetchedUser;
+    }
+
+    public void updateUserRating(String userId, int newRating, Enum.RevieweeType revieweeType) {
+        if (revieweeType.equals(Enum.RevieweeType.Participant)) {
+            UserInfo fetchedUser = userRepository.findUserInfoByUserId(userId);
+            float rating = fetchedUser.getParticipantRating();
+            int ratingsReceived = fetchedUser.getRatingsReceivedAsParticipant();
+            float updatedRating = ((rating * ratingsReceived) + newRating) / (ratingsReceived + 1);
+            int updatedRatingsReceived = ratingsReceived + 1;
+            fetchedUser.setParticipantRating(updatedRating);
+            fetchedUser.setRatingsReceivedAsParticipant(updatedRatingsReceived);
+            userRepository.save(fetchedUser);
+            return;
+        } else {
+            UserInfo fetchedUser = userRepository.findUserInfoByUserId(userId);
+            float rating = fetchedUser.getOrganizerRating();
+            int ratingsReceived = fetchedUser.getRatingsReceivedAsOrganizer();
+            float updatedRating = ((rating * ratingsReceived) + newRating) / (ratingsReceived + 1);
+            int updatedRatingsReceived = ratingsReceived + 1;
+            fetchedUser.setOrganizerRating(updatedRating);
+            fetchedUser.setRatingsReceivedAsOrganizer(updatedRatingsReceived);
+            userRepository.save(fetchedUser);
+            return;
+        }
+
     }
 
 //    public boolean checkIfUserIsOrganizer(String userId){
