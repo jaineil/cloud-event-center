@@ -4,6 +4,7 @@ import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.model.ParticipantForum;
 import com.cmpe275.cloudeventcenter.model.UserInfo;
 import com.cmpe275.cloudeventcenter.service.*;
+import com.cmpe275.cloudeventcenter.utils.EmailNotifierService;
 import com.cmpe275.cloudeventcenter.utils.Enum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ public class ParticipantForumController {
 
     @Autowired private VirtualClockService virtualClockService;
 
+    @Autowired private EmailNotifierService emailNotifierService;
     @PostMapping("/addMessage")
     public ResponseEntity<?> saveMessage(
             @RequestBody Map<?,?> reqBody
@@ -128,6 +130,16 @@ public class ParticipantForumController {
         }
         participantForumService.manuallyCloseParticipantForum(event);
         return new ResponseEntity<String>("Successfully closed the participant forum manually", HttpStatus.OK);
+    }
+
+    public void onNewMessageInParticipantForum(ParticipantForum message){
+        long eventId = message.getEventId();
+        Event event = eventService.getEventById(eventId);
+        String organizerMail = event.getUserInfo().getEmailId();
+        String eventTitle = event.getTitle();
+        emailNotifierService.notify(organizerMail,
+                "CEC Forum Alert",
+                "Hi, \n\n A new message has been posted in the participant forum of event "+eventTitle +"\n \n CEC Team");
     }
 
 }

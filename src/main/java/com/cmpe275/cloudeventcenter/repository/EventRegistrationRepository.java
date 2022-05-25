@@ -24,4 +24,7 @@ public interface EventRegistrationRepository extends CrudRepository<EventRegistr
 
     @Query(value = "SELECT * FROM event_registration WHERE event_id = ?1 AND is_approved IS NOT TRUE", nativeQuery = true)
     List<EventRegistration> getAllApprovalRequests(long eventId);
+
+    @Query(value = "SELECT * FROM event_registration WHERE event_id = ?1 AND is_approved IS TRUE", nativeQuery = true)
+    List<EventRegistration> getApprovedRequests(long eventId);
 }

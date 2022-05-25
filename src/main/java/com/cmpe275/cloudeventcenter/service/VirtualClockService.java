@@ -2,8 +2,10 @@ package com.cmpe275.cloudeventcenter.service;
 
 import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.model.VirtualClock;
+import com.cmpe275.cloudeventcenter.repository.EventRegistrationRepository;
 import com.cmpe275.cloudeventcenter.repository.EventRepository;
 import com.cmpe275.cloudeventcenter.repository.VirtualClockRepository;
+import com.cmpe275.cloudeventcenter.utils.EmailNotifierService;
 import com.cmpe275.cloudeventcenter.utils.Enum;
 import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,12 @@ public class VirtualClockService {
 
     @Autowired
     EventRegistrationService eventRegistrationService;
+
+    @Autowired
+    EventRegistrationRepository eventRegistrationRepository;
+
+    @Autowired
+    EmailNotifierService emailNotifierService;
 
      public LocalDateTime getVirtualClock() {
          try {
@@ -84,6 +92,14 @@ public class VirtualClockService {
 //             return false;
 //         } else return true;
      }
+//    public void triggerEventCancelMails(Event e){
+//    eventRegistrationRepository.findByEventId();
+//    e.getEventId()
+        //loop through all user email ids and call function to trigger mail
+
+        //emailNotifierService.notify(email);
+//    }
+
 
      @Transactional
      public void simulate(LocalDateTime virtualTime) {
@@ -109,6 +125,7 @@ public class VirtualClockService {
                      System.out.println("Number of registered users is less than min participants");
                      System.out.println("Canceling the event");
                      event.setEventStatus(Enum.EventStatus.Cancelled);
+//                     triggerEventCancelMails(event);
                      if (event.getIsSignUpForumReadOnly() == false) {
                          event.setIsSignUpForumReadOnly(true);
                      }
