@@ -13,7 +13,8 @@ public interface EventRepository extends CrudRepository<Event, Long> {
     List<Event> findAll();
     Event getEventByEventId(long eventId);
     List<Event> getAllByDeadlineBefore(LocalDateTime time);
-
     List<Event> getAllByUserInfo(UserInfo userInfo);
+    List<Event> findAllByStartTimeAfter(LocalDateTime from);
+    List<Event> findAllByStartTimeAfterAndFeeGreaterThan(LocalDateTime from, double fee);
 }
 
