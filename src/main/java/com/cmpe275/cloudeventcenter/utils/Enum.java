@@ -27,4 +27,9 @@ public class Enum {
         ClosedBecauseManuallyClosed,
         ClosedBecauseAutomatic72HourExpiry,
     }
+
+    public enum RevieweeType {
+        Participant,
+        Organizer
+    }
 }
