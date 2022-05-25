@@ -1,6 +1,5 @@
 package com.cmpe275.cloudeventcenter.controller;
 
-import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.service.SystemReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,9 @@ public class SystemReportController {
         @PathVariable("currentTime") String currentTime
     ) {
         LocalDateTime current = LocalDateTime.parse(currentTime);
-        Map<?,?> report = systemReportService.getNumberOfEventsAndPaidEvents(current);
+        Map<String, Object> report = systemReportService.getNumberOfEventsAndPaidEvents(current);
+        Map<String, Object> cancelledEventsReport = systemReportService.getNumberOfCanceledEvents(current);
+        report.putAll(cancelledEventsReport);
         return new ResponseEntity<>(report, HttpStatus.OK);
     }
 }
