@@ -1,7 +1,6 @@
 package com.cmpe275.cloudeventcenter.service;
 
 import com.cmpe275.cloudeventcenter.model.Event;
-import com.cmpe275.cloudeventcenter.repository.EventRegistrationRepository;
 import com.cmpe275.cloudeventcenter.repository.EventRepository;
 import com.cmpe275.cloudeventcenter.utils.Enum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +16,6 @@ import java.util.Map;
 public class SystemReportService {
     @Autowired
     private EventRepository eventRepository;
-
-    @Autowired
-    private EventRegistrationRepository eventRegistrationRepository;
 
     public Map<String,Object> getNumberOfEventsAndPaidEvents (LocalDateTime currentTime) {
 
@@ -59,8 +55,9 @@ public class SystemReportService {
         }
 
         try {
-            Map<String, BigDecimal> eventParticipantsToMinRequirementsRatio = eventRepository.getEventParticipantsToMinRequirementsRatio(Enum.EventStatus.Cancelled.name(), start);
-            ratio = eventParticipantsToMinRequirementsRatio.get("registered_to_min_participants");
+
+            ratio = eventRepository.getEventParticipantsToMinRequirementsRatio(Enum.EventStatus.Cancelled.name(), start);
+
             if (ratio == null) {
                 ratio = BigDecimal.valueOf(0);
             }
@@ -71,6 +68,35 @@ public class SystemReportService {
 
         res.put("numberOfCancelledEvents", cancelledEventsCount);
         res.put("eventParticipantsToMinRequirementsRatio", ratio);
+        return res;
+    }
+
+    public Map<String, Object> getNumberOfFinishedEvents (LocalDateTime currentTime) {
+        Map<String, Object> res = new HashMap<>();
+        LocalDateTime start = currentTime.minusDays(90);
+        int finishedEventsCount = 0;
+        BigDecimal avg = BigDecimal.valueOf(0);
+
+        try {
+            finishedEventsCount = eventRepository.getNumberOfFinishedEvents(Enum.EventStatus.Finished.name(), start);
+            System.out.println("Count of total finished events => " + finishedEventsCount);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+
+        try {
+            avg = eventRepository.getAverageEventParticipantsInFinishedEvents(Enum.EventStatus.Finished.name(), start);
+            System.out.println("Computed average of total event participants to total events for finished events => " + avg);
+            if (avg == null) {
+                avg = BigDecimal.valueOf(0);
+            }
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+
+        res.put("numberOfFinishedEvents", finishedEventsCount);
+        res.put("avgTotalParticipantsForFinishedEvents", avg);
+
         return res;
     }
 }

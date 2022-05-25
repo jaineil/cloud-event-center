@@ -24,7 +24,9 @@ public class SystemReportController {
         LocalDateTime current = LocalDateTime.parse(currentTime);
         Map<String, Object> report = systemReportService.getNumberOfEventsAndPaidEvents(current);
         Map<String, Object> cancelledEventsReport = systemReportService.getNumberOfCanceledEvents(current);
+        Map<String, Object> finishedEventsReport = systemReportService.getNumberOfFinishedEvents(current);
         report.putAll(cancelledEventsReport);
+        report.putAll(finishedEventsReport);
         return new ResponseEntity<>(report, HttpStatus.OK);
     }
 }

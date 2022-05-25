@@ -38,6 +38,26 @@ public interface EventRepository extends CrudRepository<Event, Long> {
             "on\n" +
             "c.event_id = c1.event_id;",
             nativeQuery = true)
-    Map<String, BigDecimal> getEventParticipantsToMinRequirementsRatio(String status, LocalDateTime from);
+    BigDecimal getEventParticipantsToMinRequirementsRatio(String status, LocalDateTime from);
+
+    @Query(value = "select count(event_id) from events where event_status = ?1 and end_time >= ?2", nativeQuery = true)
+    int getNumberOfFinishedEvents(String status, LocalDateTime from);
+
+    @Query(value = "with\n" +
+            "cte\n" +
+            "as\n" +
+            "(\n" +
+            "  select e.event_id from events e where e.event_status = ?1 and e.end_time >= ?2\n" +
+            "),\n" +
+            "cte1\n" +
+            "as\n" +
+            "(\n" +
+            "  select er.event_id, count(*) as event_participants from event_registration er group by er.event_id\n" +
+            ")\n" +
+            "select ROUND((sum(cte1.event_participants) / count(cte.event_id)),2) as average_number_of_participants from cte\n" +
+            "inner join cte1\n" +
+            "on cte.event_id = cte1.event_id;", nativeQuery = true)
+    BigDecimal getAverageEventParticipantsInFinishedEvents(String status, LocalDateTime from);
+
 }
 
