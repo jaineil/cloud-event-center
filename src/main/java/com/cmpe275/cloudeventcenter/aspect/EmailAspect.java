@@ -1,13 +1,7 @@
 package com.cmpe275.cloudeventcenter.aspect;
 
-import com.cmpe275.cloudeventcenter.controller.EventController;
-import com.cmpe275.cloudeventcenter.controller.EventRegistrationController;
-import com.cmpe275.cloudeventcenter.controller.ParticipantForumController;
-import com.cmpe275.cloudeventcenter.controller.SignupForumController;
-import com.cmpe275.cloudeventcenter.model.Event;
-import com.cmpe275.cloudeventcenter.model.EventRegistration;
-import com.cmpe275.cloudeventcenter.model.ParticipantForum;
-import com.cmpe275.cloudeventcenter.model.SignupForum;
+import com.cmpe275.cloudeventcenter.controller.*;
+import com.cmpe275.cloudeventcenter.model.*;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
@@ -29,6 +23,11 @@ public class EmailAspect {
 
     @Autowired
     SignupForumController signupForumController;
+
+    @Autowired
+    ReviewController reviewController;
+
+
 
     @After("execution(public * com.cmpe275.cloudeventcenter.service.EventService.insert(..)) && args(event)")
     public void postEventCreation(JoinPoint joinPoint, Event event ) {
@@ -59,5 +58,10 @@ public class EmailAspect {
     @After("execution(public * com.cmpe275.cloudeventcenter.service.ParticipantForumService.addMessageToSignupForum(..)) && args(message)")
     public void postNewMessageInParticipantForum(JoinPoint joinPoint, ParticipantForum message ) {
         participantForumController.onNewMessageInParticipantForum(message);
+    }
+
+    @After("execution(public * com.cmpe275.cloudeventcenter.service.ReviewService.addReview(..)) && args(review)")
+    public void postAddReview(JoinPoint joinPoint, Review review ) {
+        reviewController.onAddReview(review);
     }
 }

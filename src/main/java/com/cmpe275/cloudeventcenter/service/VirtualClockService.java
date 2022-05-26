@@ -92,13 +92,24 @@ public class VirtualClockService {
 //             return false;
 //         } else return true;
      }
-//    public void triggerEventCancelMails(Event e){
-//    eventRegistrationRepository.findByEventId();
-//    e.getEventId()
-        //loop through all user email ids and call function to trigger mail
 
-        //emailNotifierService.notify(email);
+    public void triggerEventCancelMails(Event e) {
+//    eventRegistrationRepository.findByEventId();
+
+//    e.getEventId()
+//        loop through all user email ids and call function to trigger mail
+//            String to;
+
+//        List pariticipants =
+
+//        for(String mail: participants){
+
+//        emailNotifierService.notify(
+//        to,
+//        "CEC Event Alert Notification"
+//        "Event" +eventTitle+ );
 //    }
+    }
 
 
      @Transactional

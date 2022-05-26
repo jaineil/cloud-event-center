@@ -4,6 +4,7 @@ import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.model.Review;
 import com.cmpe275.cloudeventcenter.model.UserInfo;
 import com.cmpe275.cloudeventcenter.service.*;
+import com.cmpe275.cloudeventcenter.utils.EmailNotifierService;
 import com.cmpe275.cloudeventcenter.utils.Enum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,9 @@ public class ReviewController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmailNotifierService emailNotifierService;
 
     @PostMapping("/add")
     public ResponseEntity<?> addReview (
@@ -111,5 +115,35 @@ public class ReviewController {
 
         List<Review> reviews = reviewService.getReviews(reviewee, revieweeTypeParsed);
         return new ResponseEntity<>(reviews, HttpStatus.OK);
+    }
+
+    public void onAddReview(Review review){
+        String revieweeId = review.getReviewee().getUserId();
+        String reviewerId = review.getReviewer().getUserId();
+        UserInfo reviewee = userService.getUserInfo(revieweeId);
+        UserInfo reviewer = userService.getUserInfo(reviewerId);
+        String to= reviewee.getEmailId();
+//        String eventId = review.getEvent();
+        long eventId = review.getEvent().getEventId();
+
+        String eventTitle= eventService.getEventById(eventId).getTitle();
+        String reviewText = review.getTextFeedback();
+        String reviewerScreenName = reviewer.getScreenName();
+
+        System.out.println(revieweeId);
+
+        System.out.println(eventTitle);
+        System.out.println(reviewText);
+        System.out.println(reviewerScreenName);
+
+        emailNotifierService.notify(
+                to,
+                "CEC Review Notification",
+                "Hi, \n\n You received a review for event "+ eventTitle +
+                        " from "+ reviewerScreenName+
+                        "\n  `"+ reviewText +"`"+
+                        "\n \n CEC Team"
+        );
+
     }
 }
