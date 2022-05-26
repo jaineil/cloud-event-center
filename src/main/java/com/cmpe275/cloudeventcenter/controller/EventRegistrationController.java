@@ -123,7 +123,8 @@ public class EventRegistrationController {
     ) {
 
         long registrationId = (long) (int) eventRegReq.get("registrationId");
-        eventRegistrationService.approveRegistration(registrationId);
+        LocalDateTime currentTime = virtualClockService.getVirtualClock();
+        eventRegistrationService.approveRegistration(registrationId, currentTime);
         return new ResponseEntity<String>("Successfully approved registration with id: " + registrationId, HttpStatus.CREATED);
     }
 
@@ -133,7 +134,8 @@ public class EventRegistrationController {
     ) {
 
         long registrationId = (long) (int) eventRegReq.get("registrationId");
-        eventRegistrationService.declineRegistration(registrationId);
+        LocalDateTime currentTime = virtualClockService.getVirtualClock();
+        eventRegistrationService.declineRegistration(registrationId, currentTime);
         return new ResponseEntity<String>("Successfully declined registration with id: " + registrationId, HttpStatus.CREATED);
     }
 

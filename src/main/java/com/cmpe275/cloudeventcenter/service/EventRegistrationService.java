@@ -8,6 +8,7 @@ import com.cmpe275.cloudeventcenter.utils.Enum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -27,15 +28,17 @@ public class EventRegistrationService {
         eventRegistrationRepository.save(eventRegistration);
     }
 
-    public void approveRegistration(long registrationId) {
+    public void approveRegistration(long registrationId, LocalDateTime currentTime) {
         EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByRegistrationId(registrationId);
         eventRegistration.setIsApproved(true);
+        eventRegistration.setApproveOrRejectTime(currentTime);
         eventRegistrationRepository.save(eventRegistration);
     }
 
-    public void declineRegistration(long registrationId) {
+    public void declineRegistration(long registrationId, LocalDateTime currentTime) {
         EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByRegistrationId(registrationId);
         eventRegistration.setIsDeclined(true);
+        eventRegistration.setApproveOrRejectTime(currentTime);
         eventRegistrationRepository.save(eventRegistration);
     }
 
