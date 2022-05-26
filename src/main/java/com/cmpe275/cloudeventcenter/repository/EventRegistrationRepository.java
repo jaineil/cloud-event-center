@@ -43,4 +43,10 @@ public interface EventRegistrationRepository extends CrudRepository<EventRegistr
 
     @Query(value = "SELECT * FROM event_registration WHERE event_id = ?1 AND is_approved IS TRUE AND is_declined IS NOT TRUE", nativeQuery = true)
     List<EventRegistration> getApprovedRequests(long eventId);
+
+    @Query(value = "SELECT u.email_id FROM event_registration er \n" +
+            "inner join user_info u \n" +
+            "on er.participant_id = u.user_id " +
+            "where er.event_id = ?1", nativeQuery = true)
+    List<String> getEventSignupsForCancellationEmail(long eventId);
 }

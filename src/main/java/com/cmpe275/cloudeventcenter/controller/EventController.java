@@ -104,6 +104,7 @@ public class EventController {
                                 .userInfo(userInfo)
                                 .title(title)
                                 .description(description)
+                                .creationTime(currentTime)
                                 .startTime(startTime)
                                 .endTime(endTime)
                                 .deadline(deadline)
