@@ -32,6 +32,9 @@ public class Event {
     @Column(name = "DESCRIPTION" , length = 3000)
     private String description;
 
+    @Column(name = "CREATION_TIME", columnDefinition = "TIMESTAMP")
+    private LocalDateTime creationTime;
+
     @Column(name = "START_TIME", columnDefinition = "TIMESTAMP")
     private LocalDateTime startTime;
 

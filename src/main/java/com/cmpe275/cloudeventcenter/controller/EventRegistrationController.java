@@ -187,4 +187,12 @@ public class EventRegistrationController {
                 "CEC Event Registration",
                 "Hi, \n\n Your Signup Request for the event "+eventTitle+" has been declined!" +"\n \n CEC Team");
     }
+
+    @GetMapping("/testXYZ")
+    public ResponseEntity<List> getTotalEventSignups(
+            @RequestParam long eventId
+    ) {
+        List<String> emailIds = eventRegistrationService.getAllSignupsForEvent(eventId);
+        return new ResponseEntity<List>(emailIds, HttpStatus.OK);
+    }
 }

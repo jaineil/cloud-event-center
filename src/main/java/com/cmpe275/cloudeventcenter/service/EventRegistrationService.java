@@ -74,4 +74,8 @@ public class EventRegistrationService {
         return eventRegistrationRepository.getApprovedRequests(eventId);
     }
 
+    public List getAllSignupsForEvent(long eventId) {
+        return eventRegistrationRepository.getEventSignupsForCancellationEmail(eventId);
+    }
+
 }
