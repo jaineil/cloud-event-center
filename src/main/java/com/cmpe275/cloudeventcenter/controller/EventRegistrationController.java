@@ -111,12 +111,10 @@ public class EventRegistrationController {
 
     }
 
-    @PutMapping("/pay")
+    @GetMapping("/pay")
     public ResponseEntity<String> completePaymentAPI(
-            @RequestBody Map<?,?> eventRegReq
+            @RequestParam long registrationId
     ) {
-
-        long registrationId = (long) (int) eventRegReq.get("registrationId");
         eventRegistrationService.completePayment(registrationId);
         return new ResponseEntity<String>("Successfully paid for registration with id: " + registrationId, HttpStatus.CREATED);
     }
@@ -177,9 +175,10 @@ public class EventRegistrationController {
         Event event=eventRegistration.getEvent();
         String to=eventRegistration.getUserInfo().getEmailId();
         String eventTitle = event.getTitle();
+        String paymentLink = "http://18.144.15.109:8080/eventReg/pay?registrationId=" + String.valueOf(registrationId);
         emailNotifierService.notify(to,
                 "CEC Event Registration",
-                "Hi, \n\n Your Signup Request for the event "+eventTitle+" has been approved!" +"\n \n CEC Team");
+                "Hi, \n\n Your Signup Request for the event "+eventTitle+" has been approved!" +"\n \n CEC Team. Follow this link to pay and complete your registration: " + paymentLink);
     }
 
     public void onEventRegistrationDecline(long registrationId){

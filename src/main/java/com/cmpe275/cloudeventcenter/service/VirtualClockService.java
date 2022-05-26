@@ -98,7 +98,7 @@ public class VirtualClockService {
         long eventId=event.getEventId();
         String eventTitle=event.getTitle();
         List<String> emailIds= eventRegistrationService.getAllSignupsForEvent(eventId);
-
+        System.out.println("The email IDs are: ");
         for(String emailId: emailIds){
 
         emailNotifierService.notify(

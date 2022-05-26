@@ -61,11 +61,14 @@ public class ParticipantForumController {
             }
         }
 
+        LocalDateTime currentTime = virtualClockService.getVirtualClock();
+
         ParticipantForum message = ParticipantForum.builder()
                 .userInfo(fetchedUser)
                 .messageText(messageText)
                 .imageUrl(imageUrl)
                 .eventId(eventId)
+                .timestamp(currentTime)
                 .build();
 
         long messageId = participantForumService.addMessageToSignupForum(message);
@@ -96,6 +99,9 @@ public class ParticipantForumController {
         Event event = eventService.getEventById(eventId);
         UserInfo userInfo = userService.getUserInfo(userId);
         try {
+            if (!(event.getParticipantForumStatus().equals(Enum.ParticipantForumStatus.Open))) {
+                return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+            }
             if ((userId.equals(event.getUserInfo().getUserId())) || eventRegistrationService.isUserRegistered(event, userInfo)) {
                 return new ResponseEntity<Boolean>(true, HttpStatus.OK);
             } else {

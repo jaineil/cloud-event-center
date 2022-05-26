@@ -3,16 +3,16 @@ package com.cmpe275.cloudeventcenter.controller;
 import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.model.SignupForum;
 import com.cmpe275.cloudeventcenter.model.UserInfo;
-import com.cmpe275.cloudeventcenter.service.EventRegistrationService;
-import com.cmpe275.cloudeventcenter.service.EventService;
-import com.cmpe275.cloudeventcenter.service.SignupForumService;
-import com.cmpe275.cloudeventcenter.service.UserService;
+import com.cmpe275.cloudeventcenter.service.*;
 import com.cmpe275.cloudeventcenter.utils.EmailNotifierService;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +26,8 @@ public class SignupForumController {
     @Autowired private EventService eventService;
 
     @Autowired private EventRegistrationService eventRegistrationService;
+
+    @Autowired private VirtualClockService virtualClockService;
 @Autowired private EmailNotifierService emailNotifierService;
     @PostMapping("/addMessage")
     public ResponseEntity<?> saveMessage(
@@ -45,11 +47,14 @@ public class SignupForumController {
             return new ResponseEntity<>("Sign-up forum is read-only now", HttpStatus.NOT_FOUND);
         }
 
+        LocalDateTime currentTime = virtualClockService.getVirtualClock();
+
         SignupForum message = SignupForum.builder()
                     .userInfo(fetchedUser)
                     .messageText(messageText)
                     .imageUrl(imageUrl)
                     .eventId(eventId)
+                .timestamp(currentTime)
                 .build();
 
         long messageId = signupForumService.addMessageToSignupForum(message);

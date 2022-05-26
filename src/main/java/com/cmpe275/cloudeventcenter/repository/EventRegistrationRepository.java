@@ -19,7 +19,7 @@ public interface EventRegistrationRepository extends CrudRepository<EventRegistr
     @Query(value = "UPDATE player SET team_id = NULL WHERE team_id = ?1", nativeQuery = true)
     void updateAllPlayersOfTeam(long teamId);
 
-    @Query(value = "SELECT COUNT(DISTINCT participant_id) FROM event_registration WHERE event_id = ?1 AND is_approved IS TRUE", nativeQuery = true)
+    @Query(value = "SELECT COUNT(DISTINCT participant_id) FROM event_registration WHERE event_id = ?1 AND is_approved IS TRUE AND is_paid IS TRUE", nativeQuery = true)
     int getEventRegistrationCount(long eventId);
 
     @Query(value = "SELECT * FROM event_registration WHERE event_id = ?1 AND is_approved IS NOT TRUE AND is_declined IS NOT TRUE", nativeQuery = true)
