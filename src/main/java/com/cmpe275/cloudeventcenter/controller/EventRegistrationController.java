@@ -9,8 +9,10 @@ import com.cmpe275.cloudeventcenter.repository.EventRepository;
 import com.cmpe275.cloudeventcenter.service.EventRegistrationService;
 import com.cmpe275.cloudeventcenter.service.EventService;
 import com.cmpe275.cloudeventcenter.service.UserService;
+import com.cmpe275.cloudeventcenter.service.VirtualClockService;
 import com.cmpe275.cloudeventcenter.utils.EmailNotifierService;
 import com.cmpe275.cloudeventcenter.utils.Enum;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +40,9 @@ public class EventRegistrationController {
 
     @Autowired
     private EventRegistrationRepository eventRegistrationRepository;
+
+    @Autowired
+    private VirtualClockService virtualClockService;
 
     @PostMapping()
         public ResponseEntity<String> registerEventAPI(
@@ -78,12 +83,19 @@ public class EventRegistrationController {
             isApproved = true;
             isPaid = true;
         }
+        boolean isDeclined = false;
+
+        LocalDateTime currentTime = virtualClockService.getVirtualClock();
+        System.out.println("The current virtual time is: " + currentTime);
 
         EventRegistration eventRegistration = EventRegistration.builder()
                 .event(event)
                 .userInfo(userInfo)
                 .isApproved(isApproved)
                 .isPaid(isPaid)
+                .isDeclined(isDeclined)
+                .signupTime(currentTime)
+                .approveOrRejectTime(currentTime)
                 .build();
 
         long eventRegistrationId = eventRegistrationService.insert(eventRegistration);

@@ -34,9 +34,9 @@ public class EventRegistrationService {
     }
 
     public void declineRegistration(long registrationId) {
-//        EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByRegistrationId(registrationId);
-//        eventRegistration.setIsDeclined(true);
-//        eventRegistrationRepository.save(eventRegistration);
+        EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByRegistrationId(registrationId);
+        eventRegistration.setIsDeclined(true);
+        eventRegistrationRepository.save(eventRegistration);
     }
 
     public int getEventRegistrationCount(long eventId) {
