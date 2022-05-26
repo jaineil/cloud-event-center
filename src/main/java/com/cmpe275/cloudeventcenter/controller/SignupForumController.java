@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://18.144.15.109:3000")
 @RestController
 @RequestMapping("/signupForum")
 public class SignupForumController {
