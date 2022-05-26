@@ -40,4 +40,7 @@ public interface EventRegistrationRepository extends CrudRepository<EventRegistr
             "where\n" +
             "er.participant_id = ?1 and e.event_status = 'FINISHED' and e.end_time >= ?2", nativeQuery = true)
     int getNumberOfFinishedEventsForUser(String userId, LocalDateTime start);
+
+    @Query(value = "SELECT * FROM event_registration WHERE event_id = ?1 AND is_approved IS TRUE", nativeQuery = true)
+    List<EventRegistration> getApprovedRequests(long eventId);
 }

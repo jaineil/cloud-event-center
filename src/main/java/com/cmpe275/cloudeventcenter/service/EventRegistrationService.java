@@ -33,6 +33,12 @@ public class EventRegistrationService {
         eventRegistrationRepository.save(eventRegistration);
     }
 
+    public void declineRegistration(long registrationId) {
+//        EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByRegistrationId(registrationId);
+//        eventRegistration.setIsDeclined(true);
+//        eventRegistrationRepository.save(eventRegistration);
+    }
+
     public int getEventRegistrationCount(long eventId) {
         return eventRegistrationRepository.getEventRegistrationCount(eventId);
     }
@@ -59,6 +65,10 @@ public class EventRegistrationService {
 
     public List getAllApprovalRequests(long eventId) {
         return eventRegistrationRepository.getAllApprovalRequests(eventId);
+    }
+
+    public List getApprovedRequests(long eventId) {
+        return eventRegistrationRepository.getApprovedRequests(eventId);
     }
 
 }

@@ -9,6 +9,7 @@ import com.cmpe275.cloudeventcenter.repository.EventRepository;
 import com.cmpe275.cloudeventcenter.service.EventRegistrationService;
 import com.cmpe275.cloudeventcenter.service.EventService;
 import com.cmpe275.cloudeventcenter.service.UserService;
+import com.cmpe275.cloudeventcenter.utils.EmailNotifierService;
 import com.cmpe275.cloudeventcenter.utils.Enum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,12 @@ public class EventRegistrationController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmailNotifierService emailNotifierService;
+
+    @Autowired
+    private EventRegistrationRepository eventRegistrationRepository;
 
     @PostMapping()
         public ResponseEntity<String> registerEventAPI(
@@ -108,11 +115,62 @@ public class EventRegistrationController {
         return new ResponseEntity<String>("Successfully approved registration with id: " + registrationId, HttpStatus.CREATED);
     }
 
+    @PutMapping("/decline")
+    public ResponseEntity<String> declineRegistrationAPI(
+            @RequestBody Map<?,?> eventRegReq
+    ) {
+
+        long registrationId = (long) (int) eventRegReq.get("registrationId");
+        eventRegistrationService.declineRegistration(registrationId);
+        return new ResponseEntity<String>("Successfully declined registration with id: " + registrationId, HttpStatus.CREATED);
+    }
+
     @GetMapping("/approvalRequests")
-    public ResponseEntity<List> getAllEventsByOrganizer(
+    public ResponseEntity<List> getApprovalRequestsForEvent(
             @RequestParam long eventId
     ) {
         List<EventRegistration> approvalRequests = eventRegistrationService.getAllApprovalRequests(eventId);
         return new ResponseEntity<List>(approvalRequests, HttpStatus.OK);
+    }
+
+    @GetMapping("/approvedRequests")
+    public ResponseEntity<List> getApprovedRequests(
+            @RequestParam long eventId
+    ) {
+        List<EventRegistration> approvedRequests = eventRegistrationService.getApprovedRequests(eventId);
+        return new ResponseEntity<List>(approvedRequests, HttpStatus.OK);
+    }
+
+
+
+    public void onEventSignupMail(EventRegistration eventRegistration){
+        String to=eventRegistration.getUserInfo().getEmailId();
+        String eventTitle = eventRegistration.getEvent().getTitle();
+        emailNotifierService.notify(to,
+                "CEC Event Registration",
+                eventRegistration.getEvent().getAdmissionPolicy().equals("FirstComeFirstServe")?
+                        "Hi, \n\n You have successfully registered to the event "+eventTitle+"\n \n CEC Team"
+                        :"Hi, \n\n Your signup request is pending for event "+eventTitle+
+                "\n \n CEC Team");
+    }
+
+    public void onEventRegistrationApproval(long registrationId){
+        EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByRegistrationId(registrationId);
+        Event event=eventRegistration.getEvent();
+        String to=eventRegistration.getUserInfo().getEmailId();
+        String eventTitle = event.getTitle();
+        emailNotifierService.notify(to,
+                "CEC Event Registration",
+                "Hi, \n\n Your Signup Request for the event "+eventTitle+" has been approved!" +"\n \n CEC Team");
+    }
+
+    public void onEventRegistrationDecline(long registrationId){
+        EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByRegistrationId(registrationId);
+        Event event=eventRegistration.getEvent();
+        String to=eventRegistration.getUserInfo().getEmailId();
+        String eventTitle = event.getTitle();
+        emailNotifierService.notify(to,
+                "CEC Event Registration",
+                "Hi, \n\n Your Signup Request for the event "+eventTitle+" has been declined!" +"\n \n CEC Team");
     }
 }

@@ -6,6 +6,7 @@ import com.cmpe275.cloudeventcenter.model.UserInfo;
 import com.cmpe275.cloudeventcenter.model.VirtualClock;
 import com.cmpe275.cloudeventcenter.repository.EventRegistrationRepository;
 import com.cmpe275.cloudeventcenter.service.*;
+import com.cmpe275.cloudeventcenter.utils.EmailNotifierService;
 import com.cmpe275.cloudeventcenter.utils.Enum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.coyote.Response;
@@ -42,6 +43,9 @@ public class EventController {
 
         @Autowired
         private VirtualClockService virtualClockService;
+
+        @Autowired
+        private EmailNotifierService emailNotifierService;
 
         @PostMapping()
         public ResponseEntity<String> createEventAPI(
@@ -177,5 +181,17 @@ public class EventController {
                 UserInfo userInfo = userService.getUserInfo(organizerId);
                 List<Event> allEvents = eventService.getAllEventsByOrganizer(userInfo);
                 return new ResponseEntity<List>(allEvents, HttpStatus.OK);
+        }
+
+        public void onEventCreatedMail(Event event){
+                String to=event.getUserInfo().getEmailId();
+                String eventTitle = event.getTitle();
+                emailNotifierService.notify(to,
+                        "CEC Event Creation",
+                                "Hi, \n\n You have successfully created event "+eventTitle+
+                                "\n \n CEC Team");
+
+
+                System.out.println("here");
         }
 }
