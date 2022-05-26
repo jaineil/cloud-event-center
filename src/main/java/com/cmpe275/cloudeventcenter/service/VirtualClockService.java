@@ -1,5 +1,6 @@
 package com.cmpe275.cloudeventcenter.service;
 
+import com.cmpe275.cloudeventcenter.controller.EventRegistrationController;
 import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.model.VirtualClock;
 import com.cmpe275.cloudeventcenter.repository.EventRegistrationRepository;
@@ -93,22 +94,18 @@ public class VirtualClockService {
 //         } else return true;
      }
 
-    public void triggerEventCancelMails(Event e) {
-//    eventRegistrationRepository.findByEventId();
+    public void triggerEventCancelMails(Event event) {
+        long eventId=event.getEventId();
+        String eventTitle=event.getTitle();
+        List<String> emailIds= eventRegistrationService.getAllSignupsForEvent(eventId);
 
-//    e.getEventId()
-//        loop through all user email ids and call function to trigger mail
-//            String to;
+        for(String emailId: emailIds){
 
-//        List pariticipants =
-
-//        for(String mail: participants){
-
-//        emailNotifierService.notify(
-//        to,
-//        "CEC Event Alert Notification"
-//        "Event" +eventTitle+ );
-//    }
+        emailNotifierService.notify(
+                emailId,
+        "CEC Event Alert Notification",
+        "Hi, \n Event " +eventTitle+ " has been cancelled! \n\n CEC Team");
+    }
     }
 
 
@@ -136,7 +133,7 @@ public class VirtualClockService {
                      System.out.println("Number of registered users is less than min participants");
                      System.out.println("Canceling the event");
                      event.setEventStatus(Enum.EventStatus.Cancelled);
-//                     triggerEventCancelMails(event);
+                     triggerEventCancelMails(event);
                      if (event.getIsSignUpForumReadOnly() == false) {
                          event.setIsSignUpForumReadOnly(true);
                      }
@@ -175,6 +172,8 @@ public class VirtualClockService {
                      System.out.println("Number of registered users is less than min participants");
                      System.out.println("Canceling the event");
                      event.setEventStatus(Enum.EventStatus.Cancelled);
+                     triggerEventCancelMails(event);
+
                      if (event.getIsSignUpForumReadOnly() == false) {
                          event.setIsSignUpForumReadOnly(true);
                      }
@@ -234,6 +233,8 @@ public class VirtualClockService {
                     System.out.println("Number of registered users is less than min participants");
                     System.out.println("Canceling the event");
                     event.setEventStatus(Enum.EventStatus.Cancelled);
+                    triggerEventCancelMails(event);
+
                     if (event.getIsSignUpForumReadOnly() == false) {
                         event.setIsSignUpForumReadOnly(true);
                     }
@@ -272,6 +273,8 @@ public class VirtualClockService {
                     System.out.println("Number of registered users is less than min participants");
                     System.out.println("Canceling the event");
                     event.setEventStatus(Enum.EventStatus.Cancelled);
+                    triggerEventCancelMails(event);
+
                     if (event.getIsSignUpForumReadOnly() == false) {
                         event.setIsSignUpForumReadOnly(true);
                     }
