@@ -85,6 +85,10 @@ public class EventRegistrationController {
         }
         boolean isDeclined = false;
 
+        if (event.getFee() == 0) {
+            isPaid = true;
+        }
+
         LocalDateTime currentTime = virtualClockService.getVirtualClock();
         System.out.println("The current virtual time is: " + currentTime);
 

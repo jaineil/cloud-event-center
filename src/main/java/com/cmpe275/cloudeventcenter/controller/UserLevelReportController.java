@@ -26,10 +26,19 @@ public class UserLevelReportController {
         Map<String, Object> rejected = userLevelReportService.getNumberOfRejectsForParticipant(current, userId);
         Map<String, Object> accepted = userLevelReportService.getNumberOfAcceptsForParticipant(current, userId);
         Map<String, Object> finished = userLevelReportService.getNumberOfFinishedEventsForParticipant(current, userId);
-
+        Map<String, Object> orgReport = userLevelReportService.getNumberOfEventsCreatedForOrganizer(current, userId);
+        Map<String, Object> orgCancelled = userLevelReportService.getNumberOfCancelledEventsForOrganizer(current, userId);
+        Map<String, Object> orgRatio = userLevelReportService.getRatioOfParticipantRequestsToMinimumRequiredParticipants(current, userId);
+        Map<String, Object> orgAvg = userLevelReportService.getAverageNumberOfParticipantsAmongFinishedEventsForOrganization(current, userId);
+        Map<String, Object> orgRevenue = userLevelReportService.getRevenueOfPaidAndFinishedEventsForOrganizer(current, userId);
         report.putAll(rejected);
         report.putAll(accepted);
         report.putAll(finished);
+        report.putAll(orgReport);
+        report.putAll(orgCancelled);
+        report.putAll(orgRatio);
+        report.putAll(orgAvg);
+        report.putAll(orgRevenue);
 
         return new ResponseEntity<>(report, HttpStatus.OK);
     }

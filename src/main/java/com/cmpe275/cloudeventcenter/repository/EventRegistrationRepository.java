@@ -31,14 +31,14 @@ public interface EventRegistrationRepository extends CrudRepository<EventRegistr
     @Query(value = "select count(event_id) from event_registration where participant_id = ?1 and is_declined = true and approve_or_reject_time >= ?2", nativeQuery = true)
     int getNumberOfRejectsForUser(String userId, LocalDateTime start);
 
-    @Query(value = "select count(event_id) from event_registration where participant_id = ?1 and is_accepted = true and approve_or_reject_time >= ?2", nativeQuery = true)
+    @Query(value = "select count(event_id) from event_registration where participant_id = ?1 and is_approved = true and approve_or_reject_time >= ?2", nativeQuery = true)
     int getNumberOfAcceptsForUser(String userId, LocalDateTime start);
 
     @Query(value = "select count(er.event_id) from event_registration er \n" +
-            "inner join event e\n" +
+            "inner join events e\n" +
             "on e.event_id = er.event_id\n" +
             "where\n" +
-            "er.participant_id = ?1 and e.event_status = 'FINISHED' and e.end_time >= ?2", nativeQuery = true)
+            "er.participant_id = ?1 and e.event_status = 'Finished' and e.end_time >= ?2", nativeQuery = true)
     int getNumberOfFinishedEventsForUser(String userId, LocalDateTime start);
 
     @Query(value = "SELECT * FROM event_registration WHERE event_id = ?1 AND is_approved IS TRUE AND is_declined IS NOT TRUE", nativeQuery = true)
