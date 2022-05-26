@@ -51,7 +51,7 @@ public class UserController {
         emailNotifierService.notify(
                 email,
                 "Email Verification Success",
-                "Hi,\n\nYour account has been successfully successfully verified. \n\n CEC Team"
+                "Hi,\n\nYour account has been successfully verified. \n\n CEC Team"
         );
         return new ResponseEntity<>("triggerVerifiedMail sent to "+email,HttpStatus.OK);
     }
