@@ -9,8 +9,10 @@ import com.cmpe275.cloudeventcenter.repository.EventRepository;
 import com.cmpe275.cloudeventcenter.service.EventRegistrationService;
 import com.cmpe275.cloudeventcenter.service.EventService;
 import com.cmpe275.cloudeventcenter.service.UserService;
+import com.cmpe275.cloudeventcenter.service.VirtualClockService;
 import com.cmpe275.cloudeventcenter.utils.EmailNotifierService;
 import com.cmpe275.cloudeventcenter.utils.Enum;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +40,9 @@ public class EventRegistrationController {
 
     @Autowired
     private EventRegistrationRepository eventRegistrationRepository;
+
+    @Autowired
+    private VirtualClockService virtualClockService;
 
     @PostMapping()
         public ResponseEntity<String> registerEventAPI(
@@ -78,12 +83,19 @@ public class EventRegistrationController {
             isApproved = true;
             isPaid = true;
         }
+        boolean isDeclined = false;
+
+        LocalDateTime currentTime = virtualClockService.getVirtualClock();
+        System.out.println("The current virtual time is: " + currentTime);
 
         EventRegistration eventRegistration = EventRegistration.builder()
                 .event(event)
                 .userInfo(userInfo)
                 .isApproved(isApproved)
                 .isPaid(isPaid)
+                .isDeclined(isDeclined)
+                .signupTime(currentTime)
+                .approveOrRejectTime(currentTime)
                 .build();
 
         long eventRegistrationId = eventRegistrationService.insert(eventRegistration);
@@ -111,7 +123,8 @@ public class EventRegistrationController {
     ) {
 
         long registrationId = (long) (int) eventRegReq.get("registrationId");
-        eventRegistrationService.approveRegistration(registrationId);
+        LocalDateTime currentTime = virtualClockService.getVirtualClock();
+        eventRegistrationService.approveRegistration(registrationId, currentTime);
         return new ResponseEntity<String>("Successfully approved registration with id: " + registrationId, HttpStatus.CREATED);
     }
 
@@ -121,7 +134,8 @@ public class EventRegistrationController {
     ) {
 
         long registrationId = (long) (int) eventRegReq.get("registrationId");
-        eventRegistrationService.declineRegistration(registrationId);
+        LocalDateTime currentTime = virtualClockService.getVirtualClock();
+        eventRegistrationService.declineRegistration(registrationId, currentTime);
         return new ResponseEntity<String>("Successfully declined registration with id: " + registrationId, HttpStatus.CREATED);
     }
 
@@ -172,5 +186,13 @@ public class EventRegistrationController {
         emailNotifierService.notify(to,
                 "CEC Event Registration",
                 "Hi, \n\n Your Signup Request for the event "+eventTitle+" has been declined!" +"\n \n CEC Team");
+    }
+
+    @GetMapping("/testXYZ")
+    public ResponseEntity<List> getTotalEventSignups(
+            @RequestParam long eventId
+    ) {
+        List<String> emailIds = eventRegistrationService.getAllSignupsForEvent(eventId);
+        return new ResponseEntity<List>(emailIds, HttpStatus.OK);
     }
 }
