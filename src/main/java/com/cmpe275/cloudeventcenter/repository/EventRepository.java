@@ -17,8 +17,10 @@ public interface EventRepository extends CrudRepository<Event, Long> {
     Event getEventByEventId(long eventId);
     List<Event> getAllByDeadlineBefore(LocalDateTime time);
     List<Event> getAllByUserInfo(UserInfo userInfo);
-    List<Event> findAllByStartTimeAfter(LocalDateTime from);
-    List<Event> findAllByStartTimeAfterAndFeeGreaterThan(LocalDateTime from, double fee);
+//    List<Event> findAllByStartTimeAfter(LocalDateTime from);
+    List<Event> findAllByCreationTimeAfter(LocalDateTime from);
+//    List<Event> findAllByStartTimeAfterAndFeeGreaterThan(LocalDateTime from, double fee);
+    List<Event> findAllByCreationTimeAfterAndFeeGreaterThan(LocalDateTime from, double fee);
 
     @Query(value = "select count(event_id) from events where event_status = ?1 and deadline >= ?2", nativeQuery = true)
     int getNumberOfCancelledEvents(String status, LocalDateTime from);

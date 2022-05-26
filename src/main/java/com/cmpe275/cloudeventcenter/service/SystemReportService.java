@@ -23,12 +23,15 @@ public class SystemReportService {
 
         LocalDateTime start = currentTime.minusDays(90);
 
-        List<Event> allEvents = eventRepository.findAllByStartTimeAfter(start);
-        List<Event> allPaidEvents = eventRepository.findAllByStartTimeAfterAndFeeGreaterThan(start, 0.0);
+        List<Event> allEvents = eventRepository.findAllByCreationTimeAfter(start);
+        List<Event> allPaidEvents = eventRepository.findAllByCreationTimeAfterAndFeeGreaterThan(start, 0.0);
 
         int numberOfEvents = allEvents.size();
         int numberOfAllPaidEvents = allPaidEvents.size();
-        if (numberOfAllPaidEvents == 0) {
+        if (numberOfEvents == 0) {
+            res.put("numberOfCreatedEvents", 0);
+            res.put("percentageOfPaidEvents", 0.0);
+        } else if (numberOfAllPaidEvents == 0) {
             res.put("numberOfCreatedEvents", numberOfEvents);
             res.put("percentageOfPaidEvents", 0.0);
         } else {
