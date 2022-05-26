@@ -4,6 +4,7 @@ import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.model.ParticipantForum;
 import com.cmpe275.cloudeventcenter.model.UserInfo;
 import com.cmpe275.cloudeventcenter.service.*;
+import com.cmpe275.cloudeventcenter.utils.EmailNotifierService;
 import com.cmpe275.cloudeventcenter.utils.Enum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://18.144.15.109:3000")
 @RestController
 @RequestMapping("/participantForum")
 public class ParticipantForumController {
@@ -25,6 +26,7 @@ public class ParticipantForumController {
 
     @Autowired private VirtualClockService virtualClockService;
 
+    @Autowired private EmailNotifierService emailNotifierService;
     @PostMapping("/addMessage")
     public ResponseEntity<?> saveMessage(
             @RequestBody Map<?,?> reqBody
@@ -59,11 +61,14 @@ public class ParticipantForumController {
             }
         }
 
+        LocalDateTime currentTime = virtualClockService.getVirtualClock();
+
         ParticipantForum message = ParticipantForum.builder()
                 .userInfo(fetchedUser)
                 .messageText(messageText)
                 .imageUrl(imageUrl)
                 .eventId(eventId)
+                .timestamp(currentTime)
                 .build();
 
         long messageId = participantForumService.addMessageToSignupForum(message);
@@ -94,6 +99,9 @@ public class ParticipantForumController {
         Event event = eventService.getEventById(eventId);
         UserInfo userInfo = userService.getUserInfo(userId);
         try {
+            if (!(event.getParticipantForumStatus().equals(Enum.ParticipantForumStatus.Open))) {
+                return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+            }
             if ((userId.equals(event.getUserInfo().getUserId())) || eventRegistrationService.isUserRegistered(event, userInfo)) {
                 return new ResponseEntity<Boolean>(true, HttpStatus.OK);
             } else {
@@ -128,6 +136,16 @@ public class ParticipantForumController {
         }
         participantForumService.manuallyCloseParticipantForum(event);
         return new ResponseEntity<String>("Successfully closed the participant forum manually", HttpStatus.OK);
+    }
+
+    public void onNewMessageInParticipantForum(ParticipantForum message){
+        long eventId = message.getEventId();
+        Event event = eventService.getEventById(eventId);
+        String organizerMail = event.getUserInfo().getEmailId();
+        String eventTitle = event.getTitle();
+        emailNotifierService.notify(organizerMail,
+                "CEC Forum Alert",
+                "Hi, \n\n A new message has been posted in the participant forum of event "+eventTitle +"\n \n CEC Team");
     }
 
 }

@@ -3,20 +3,21 @@ package com.cmpe275.cloudeventcenter.controller;
 import com.cmpe275.cloudeventcenter.model.Event;
 import com.cmpe275.cloudeventcenter.model.SignupForum;
 import com.cmpe275.cloudeventcenter.model.UserInfo;
-import com.cmpe275.cloudeventcenter.service.EventRegistrationService;
-import com.cmpe275.cloudeventcenter.service.EventService;
-import com.cmpe275.cloudeventcenter.service.SignupForumService;
-import com.cmpe275.cloudeventcenter.service.UserService;
+import com.cmpe275.cloudeventcenter.service.*;
+import com.cmpe275.cloudeventcenter.utils.EmailNotifierService;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://18.144.15.109:3000")
 @RestController
 @RequestMapping("/signupForum")
 public class SignupForumController {
@@ -26,6 +27,8 @@ public class SignupForumController {
 
     @Autowired private EventRegistrationService eventRegistrationService;
 
+    @Autowired private VirtualClockService virtualClockService;
+@Autowired private EmailNotifierService emailNotifierService;
     @PostMapping("/addMessage")
     public ResponseEntity<?> saveMessage(
             @RequestBody Map<?,?> reqBody
@@ -44,11 +47,14 @@ public class SignupForumController {
             return new ResponseEntity<>("Sign-up forum is read-only now", HttpStatus.NOT_FOUND);
         }
 
+        LocalDateTime currentTime = virtualClockService.getVirtualClock();
+
         SignupForum message = SignupForum.builder()
                     .userInfo(fetchedUser)
                     .messageText(messageText)
                     .imageUrl(imageUrl)
                     .eventId(eventId)
+                .timestamp(currentTime)
                 .build();
 
         long messageId = signupForumService.addMessageToSignupForum(message);
@@ -81,5 +87,14 @@ public class SignupForumController {
         messageList.clear();
         messageList.addAll(finalMessageList);
         return new ResponseEntity<>(messageList, HttpStatus.OK);
+    }
+    public void onNewMessageInSignUpForum(SignupForum message){
+        long eventId = message.getEventId();
+        Event event = eventService.getEventById(eventId);
+        String organizerMail = event.getUserInfo().getEmailId();
+        String eventTitle = event.getTitle();
+        emailNotifierService.notify(organizerMail,
+                "CEC Forum Alert",
+                "Hi, \n\n A new message has been posted in the participant forum of event "+eventTitle +"\n \n CEC Team");
     }
 }

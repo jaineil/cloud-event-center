@@ -34,4 +34,14 @@ public class EventRegistration {
 
     @Column(name = "IS_PAID")
     private Boolean isPaid;
+
+    @Column(name = "IS_DECLINED")
+    private Boolean isDeclined;
+
+    @Column(name = "SIGNUP_TIME", columnDefinition = "TIMESTAMP")
+    private LocalDateTime signupTime;
+
+    @Column(name = "APPROVE_OR_REJECT_TIME", columnDefinition = "TIMESTAMP")
+    private LocalDateTime approveOrRejectTime;
+
 }

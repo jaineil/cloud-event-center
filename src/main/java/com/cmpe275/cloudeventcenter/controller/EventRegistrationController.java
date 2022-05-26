@@ -9,7 +9,10 @@ import com.cmpe275.cloudeventcenter.repository.EventRepository;
 import com.cmpe275.cloudeventcenter.service.EventRegistrationService;
 import com.cmpe275.cloudeventcenter.service.EventService;
 import com.cmpe275.cloudeventcenter.service.UserService;
+import com.cmpe275.cloudeventcenter.service.VirtualClockService;
+import com.cmpe275.cloudeventcenter.utils.EmailNotifierService;
 import com.cmpe275.cloudeventcenter.utils.Enum;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://18.144.15.109:3000")
 @RestController
 @RequestMapping("/eventReg")
 public class EventRegistrationController {
@@ -31,6 +34,15 @@ public class EventRegistrationController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmailNotifierService emailNotifierService;
+
+    @Autowired
+    private EventRegistrationRepository eventRegistrationRepository;
+
+    @Autowired
+    private VirtualClockService virtualClockService;
 
     @PostMapping()
         public ResponseEntity<String> registerEventAPI(
@@ -71,12 +83,23 @@ public class EventRegistrationController {
             isApproved = true;
             isPaid = true;
         }
+        boolean isDeclined = false;
+
+        if (event.getFee() == 0) {
+            isPaid = true;
+        }
+
+        LocalDateTime currentTime = virtualClockService.getVirtualClock();
+        System.out.println("The current virtual time is: " + currentTime);
 
         EventRegistration eventRegistration = EventRegistration.builder()
                 .event(event)
                 .userInfo(userInfo)
                 .isApproved(isApproved)
                 .isPaid(isPaid)
+                .isDeclined(isDeclined)
+                .signupTime(currentTime)
+                .approveOrRejectTime(currentTime)
                 .build();
 
         long eventRegistrationId = eventRegistrationService.insert(eventRegistration);
@@ -88,12 +111,10 @@ public class EventRegistrationController {
 
     }
 
-    @PutMapping("/pay")
+    @GetMapping("/pay")
     public ResponseEntity<String> completePaymentAPI(
-            @RequestBody Map<?,?> eventRegReq
+            @RequestParam long registrationId
     ) {
-
-        long registrationId = (long) (int) eventRegReq.get("registrationId");
         eventRegistrationService.completePayment(registrationId);
         return new ResponseEntity<String>("Successfully paid for registration with id: " + registrationId, HttpStatus.CREATED);
     }
@@ -104,15 +125,77 @@ public class EventRegistrationController {
     ) {
 
         long registrationId = (long) (int) eventRegReq.get("registrationId");
-        eventRegistrationService.approveRegistration(registrationId);
+        LocalDateTime currentTime = virtualClockService.getVirtualClock();
+        eventRegistrationService.approveRegistration(registrationId, currentTime);
         return new ResponseEntity<String>("Successfully approved registration with id: " + registrationId, HttpStatus.CREATED);
     }
 
+    @PutMapping("/decline")
+    public ResponseEntity<String> declineRegistrationAPI(
+            @RequestBody Map<?,?> eventRegReq
+    ) {
+
+        long registrationId = (long) (int) eventRegReq.get("registrationId");
+        LocalDateTime currentTime = virtualClockService.getVirtualClock();
+        eventRegistrationService.declineRegistration(registrationId, currentTime);
+        return new ResponseEntity<String>("Successfully declined registration with id: " + registrationId, HttpStatus.CREATED);
+    }
+
     @GetMapping("/approvalRequests")
-    public ResponseEntity<List> getAllEventsByOrganizer(
+    public ResponseEntity<List> getApprovalRequestsForEvent(
             @RequestParam long eventId
     ) {
         List<EventRegistration> approvalRequests = eventRegistrationService.getAllApprovalRequests(eventId);
         return new ResponseEntity<List>(approvalRequests, HttpStatus.OK);
+    }
+
+    @GetMapping("/approvedRequests")
+    public ResponseEntity<List> getApprovedRequests(
+            @RequestParam long eventId
+    ) {
+        List<EventRegistration> approvedRequests = eventRegistrationService.getApprovedRequests(eventId);
+        return new ResponseEntity<List>(approvedRequests, HttpStatus.OK);
+    }
+
+
+
+    public void onEventSignupMail(EventRegistration eventRegistration){
+        String to=eventRegistration.getUserInfo().getEmailId();
+        String eventTitle = eventRegistration.getEvent().getTitle();
+        emailNotifierService.notify(to,
+                "CEC Event Registration",
+                eventRegistration.getEvent().getAdmissionPolicy().equals("FirstComeFirstServe")?
+                        "Hi, \n\n You have successfully registered to the event "+eventTitle+"\n \n CEC Team"
+                        :"Hi, \n\n Your signup request is pending for event "+eventTitle+
+                "\n \n CEC Team");
+    }
+
+    public void onEventRegistrationApproval(long registrationId){
+        EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByRegistrationId(registrationId);
+        Event event=eventRegistration.getEvent();
+        String to=eventRegistration.getUserInfo().getEmailId();
+        String eventTitle = event.getTitle();
+        String paymentLink = "http://18.144.15.109:8080/eventReg/pay?registrationId=" + String.valueOf(registrationId);
+        emailNotifierService.notify(to,
+                "CEC Event Registration",
+                "Hi, \n\n Your Signup Request for the event "+eventTitle+" has been approved!" +"\n \n CEC Team. Follow this link to pay and complete your registration: " + paymentLink);
+    }
+
+    public void onEventRegistrationDecline(long registrationId){
+        EventRegistration eventRegistration = eventRegistrationRepository.getEventRegistrationByRegistrationId(registrationId);
+        Event event=eventRegistration.getEvent();
+        String to=eventRegistration.getUserInfo().getEmailId();
+        String eventTitle = event.getTitle();
+        emailNotifierService.notify(to,
+                "CEC Event Registration",
+                "Hi, \n\n Your Signup Request for the event "+eventTitle+" has been declined!" +"\n \n CEC Team");
+    }
+
+    @GetMapping("/testXYZ")
+    public ResponseEntity<List> getTotalEventSignups(
+            @RequestParam long eventId
+    ) {
+        List<String> emailIds = eventRegistrationService.getAllSignupsForEvent(eventId);
+        return new ResponseEntity<List>(emailIds, HttpStatus.OK);
     }
 }

@@ -25,8 +25,7 @@ public class SignupForum {
     @JsonIgnoreProperties({"address", "gender", "description"})
     private UserInfo userInfo;
 
-    @Column(name = "TIMESTAMP")
-    @CreationTimestamp
+    @Column(name = "TIMESTAMP", columnDefinition = "TIMESTAMP")
     private LocalDateTime timestamp;
 
     @Column(name = "MESSAGE_TEXT")

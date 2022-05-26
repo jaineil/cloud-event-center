@@ -69,7 +69,6 @@ public class EventService {
             requiredStatuses.add(Enum.EventStatus.Ongoing);
         } else if (eventStatus.equalsIgnoreCase("openForRegistration")) {
             requiredStatuses.add(Enum.EventStatus.SignUpOpen);
-            requiredStatuses.add(Enum.EventStatus.SignUpClosed);
         } else if (eventStatus.equalsIgnoreCase("all")) {
             requiredStatuses.add(Enum.EventStatus.SignUpOpen);
             requiredStatuses.add(Enum.EventStatus.SignUpClosed);
